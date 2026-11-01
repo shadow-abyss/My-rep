@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#101114">
+<title>Home</title>
+<style>
+:root{color-scheme:dark;--accent:#d9d9df;--glass:rgba(16,17,20,.48);--line:rgba(255,255,255,.16);--text:#f6f6f7;--muted:rgba(255,255,255,.7)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#101114;color:var(--text)}
+body{min-height:100svh;overflow:hidden}
+button,input,select{font:inherit}
+button{cursor:pointer}
+.wallpaper{position:fixed;inset:0;background:#15161a center/cover no-repeat;z-index:-3;transform:scale(1.015);transition:filter .2s}
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.22);z-index:-2;pointer-events:none;transition:background .2s}
+.topbar{position:fixed;top:0;right:0;left:0;padding:calc(18px + env(safe-area-inset-top)) 20px 16px;display:flex;justify-content:flex-end;align-items:center;gap:10px}
+.icon-btn{width:42px;height:42px;border:1px solid var(--line);border-radius:50%;background:rgba(12,13,16,.25);color:white;display:grid;place-items:center;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:background .18s,transform .18s}
+.icon-btn:hover{background:rgba(12,13,16,.55)}.icon-btn:active{transform:scale(.96)}
+.icon-btn svg{width:19px;height:19px}
+main{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 20px calc(42px + env(safe-area-inset-bottom));gap:22px}
+.search-wrap{width:min(600px,100%)}
+.search{display:flex;align-items:center;gap:12px;padding:0 17px;min-height:58px;border:1px solid rgba(255,255,255,.22);border-radius:18px;background:var(--glass);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 10px 36px rgba(0,0,0,.12);transition:border-color .2s,background .2s}
+.search:focus-within{border-color:rgba(255,255,255,.55);background:rgba(12,13,16,.66)}
+.search svg{width:20px;height:20px;flex:none;color:rgba(255,255,255,.8)}
+.search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:white;font-size:16px;padding:17px 0}
+.search input::placeholder{color:rgba(255,255,255,.72)}
+.search button{border:0;background:transparent;color:rgba(255,255,255,.72);padding:8px 0 8px 8px;font-size:13px}
+.shortcuts{width:min(600px,100%);display:flex;justify-content:center;align-items:flex-start;flex-wrap:wrap;gap:9px}
+.shortcut{position:relative;width:82px;min-height:92px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:9px;padding:7px 4px 9px;text-decoration:none;color:white;border-radius:14px;background:transparent;transition:background .18s}
+.shortcut:hover,.shortcut:focus-visible{background:rgba(10,11,14,.35);outline:none}
+.shortcut-icon{width:48px;height:48px;border:1px solid rgba(255,255,255,.19);border-radius:16px;background:rgba(12,13,16,.38);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:grid;place-items:center;font-size:18px;font-weight:600;overflow:hidden}
+.shortcut-icon img{width:22px;height:22px;object-fit:contain}
+.shortcut-name{max-width:76px;font-size:12px;line-height:1.25;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 8px rgba(0,0,0,.5)}
+.shortcut .remove{display:none;position:absolute;top:0;right:2px;width:22px;height:22px;border:1px solid var(--line);border-radius:50%;background:rgba(12,13,16,.8);color:white;font-size:15px;line-height:1}
+body.editing .shortcut .remove{display:block}
+.shortcut.add{display:none}
+body.editing .shortcut.add{display:flex}
+.shortcut.add .shortcut-icon{border-style:dashed;color:rgba(255,255,255,.85);font-size:24px;font-weight:300}
+.hint{font-size:12px;color:rgba(255,255,255,.55);text-align:center}
+.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.48);opacity:0;pointer-events:none;transition:opacity .22s;z-index:5}
+.drawer{position:fixed;z-index:6;top:0;right:0;bottom:0;width:min(390px,100%);padding:calc(20px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));background:rgba(20,21,25,.96);border-left:1px solid rgba(255,255,255,.1);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);transform:translateX(102%);transition:transform .24s ease;overflow:auto}
+body.settings-open .drawer-backdrop{opacity:1;pointer-events:auto}
+body.settings-open .drawer{transform:translateX(0)}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.drawer-head h1{font-size:18px;font-weight:600;margin:0}
+.section{padding:17px 0;border-top:1px solid rgba(255,255,255,.1)}
+.section h2{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:rgba(255,255,255,.56);font-weight:600;margin:0 0 14px}
+.field{display:flex;flex-direction:column;gap:8px;margin:0 0 15px}
+.field:last-child{margin-bottom:0}
+.field label,.field-label{font-size:13px;color:rgba(255,255,255,.86)}
+.field input[type="text"],.field input[type="url"],.field select{width:100%;min-height:43px;padding:10px 12px;border:1px solid rgba(255,255,255,.14);border-radius:11px;background:#222329;color:#fff;outline:none}
+.field input:focus,.field select:focus{border-color:rgba(255,255,255,.5)}
+.field input[type="range"]{width:100%;accent-color:var(--accent)}
+.field input[type="color"]{width:46px;height:36px;border:0;padding:0;background:transparent}
+.inline{display:flex;align-items:center;gap:12px}
+.inline .grow{flex:1;min-width:0}
+.check-row{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:13px;color:rgba(255,255,255,.86);padding:3px 0}
+.check-row input{accent-color:var(--accent);width:17px;height:17px}
+.btn{border:1px solid rgba(255,255,255,.15);border-radius:11px;background:rgba(255,255,255,.08);color:white;padding:11px 13px;font-size:13px}
+.btn.primary{background:#f0f0f2;color:#17181b;border-color:#f0f0f2;font-weight:600}
+.btn:active{transform:scale(.99)}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.shortcut-form{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.shortcut-form .wide{grid-column:1/-1}
+.note{font-size:12px;color:rgba(255,255,255,.48);line-height:1.5;margin-top:10px}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,12px);opacity:0;pointer-events:none;padding:10px 14px;border-radius:12px;background:rgba(16,17,20,.86);border:1px solid var(--line);color:#fff;font-size:13px;backdrop-filter:blur(16px);transition:all .2s;z-index:10}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:480px){main{gap:17px;padding-left:16px;padding-right:16px}.search{min-height:54px;border-radius:16px}.shortcuts{gap:4px}.shortcut{width:72px;min-height:85px}.shortcut-icon{width:45px;height:45px;border-radius:15px}.topbar{padding-left:15px;padding-right:15px}.drawer{padding-left:17px;padding-right:17px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="wallpaper" id="wallpaper"></div><div class="scrim" id="scrim"></div>
+<header class="topbar">
+<button class="icon-btn" id="editBtn" aria-label="Edit shortcuts" title="Edit shortcuts" hidden>
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
+</button>
+<button class="icon-btn" id="settingsBtn" aria-label="Settings" title="Settings">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.5.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.5-.9l-1.7.6-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.8l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.5-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.5.9l1.7-.6 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.7Z" transform="translate(-1 -1) scale(1.05)"/></svg>
+</button>
+</header>
+<main>
+<form class="search-wrap" id="searchForm" role="search">
+<div class="search">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
+<input id="searchInput" type="text" placeholder="Search the web" autocomplete="off" aria-label="Search the web">
+<button type="submit" aria-label="Submit search">↵</button>
+</div>
+</form>
+<nav class="shortcuts" id="shortcuts" aria-label="Website shortcuts"></nav>
+</main>
+<div class="drawer-backdrop" id="backdrop"></div>
+<aside class="drawer" id="drawer" aria-label="Homepage settings" aria-hidden="true">
+<div class="drawer-head"><h1>Settings</h1><button class="icon-btn" id="closeSettings" aria-label="Close settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
+<section class="section"><h2>Appearance</h2>
+<div class="field"><label for="wallpaperUrl">Wallpaper image URL</label><input id="wallpaperUrl" type="url" placeholder="https://example.com/image.jpg" inputmode="url"><div class="btn-row"><button class="btn" id="applyWallpaper">Apply wallpaper</button><button class="btn" id="resetWallpaper">Reset</button></div><div class="note">Use a direct image link. Your browser loads it as the background.</div></div>
+<div class="field"><label for="overlay">Dark overlay <span id="overlayValue">22%</span></label><input id="overlay" type="range" min="0" max="75" value="22"></div>
+<div class="field"><label for="blur">Background blur <span id="blurValue">0px</span></label><input id="blur" type="range" min="0" max="12" value="0"></div>
+<div class="field"><label for="accent">Accent color</label><div class="inline"><input id="accent" type="color" value="#d9d9df"><span class="note grow">Used for small interface details.</span></div></div>
+</section>
+<section class="section"><h2>Search</h2>
+<div class="field"><label for="engine">Search engine</label><select id="engine"><option value="https://www.google.com/search?q=">Google</option><option value="https://duckduckgo.com/?q=">DuckDuckGo</option><option value="https://www.bing.com/search?q=">Bing</option><option value="https://search.brave.com/search?q=">Brave Search</option></select></div>
+<div class="check-row"><label for="newTab">Open searches in a new tab</label><input id="newTab" type="checkbox" checked></div>
+</section>
+<section class="section"><h2>Shortcuts</h2>
+<div class="field"><label for="shortcutName">Name</label><input id="shortcutName" type="text" placeholder="YouTube" maxlength="24"></div>
+<div class="field"><label for="shortcutUrl">Website URL</label><input id="shortcutUrl" type="url" placeholder="https://youtube.com" inputmode="url"></div>
+<div class="btn-row"><button class="btn primary" id="addShortcut">Add shortcut</button><button class="btn" id="editShortcuts">Manage shortcuts</button></div>
+<div class="note">In manage mode, use × on a shortcut to remove it. Shortcuts open in a new tab.</div>
+</section>
+<section class="section"><h2>Data</h2>
+<div class="btn-row"><button class="btn" id="exportSettings">Export settings</button><button class="btn" id="importSettings">Import settings</button><button class="btn" id="resetAll">Reset all</button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
+<div class="note">Settings are saved on this device in this browser. Export a backup before clearing browser data.</div>
+</section>
+</aside>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+(() => {
+const $ = id => document.getElementById(id);
+const DEFAULTS = {
+ wallpaper:'', overlay:22, blur:0, accent:'#d9d9df', engine:'https://www.google.com/search?q=', newTab:true,
+ shortcuts:[
+  {name:'YouTube',url:'https://www.youtube.com',icon:'▶'},
+  {name:'GitHub',url:'https://github.com',icon:'⌘'},
+  {name:'Reddit',url:'https://www.reddit.com',icon:'r'},
+  {name:'ChatGPT',url:'https://chatgpt.com',icon:'✳'}
+ ]
+};
+let settings = structuredClone(DEFAULTS);
+let editing = false;
+let toastTimer;
+function safeUrl(raw) {
+ try { const u = new URL(raw); return ['http:','https:'].includes(u.protocol) ? u.href : null; } catch { return null; }
+}
+function save() { try { localStorage.setItem('minimal-home-settings-v1', JSON.stringify(settings)); } catch {} }
+function toast(message) {
+ const el=$('toast'); el.textContent=message; el.classList.add('show');
+ clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
+}
+function applyAppearance() {
+ const wallpaper=$('wallpaper');
+ wallpaper.style.backgroundImage=settings.wallpaper ? `url("${settings.wallpaper.replace(/["\\\n\r]/g,'')}")` : 'linear-gradient(145deg,#252a33,#111319 55%,#202027)';
+ $('scrim').style.background=`rgba(0,0,0,${Number(settings.overlay)/100})`;
+ wallpaper.style.filter=`blur(${Number(settings.blur)}px)`;
+ document.documentElement.style.setProperty('--accent',settings.accent);
+ $('overlay').value=settings.overlay; $('overlayValue').textContent=settings.overlay+'%';
+ $('blur').value=settings.blur; $('blurValue').textContent=settings.blur+'px';
+ $('wallpaperUrl').value=settings.wallpaper;
+ $('accent').value=settings.accent;
+}
+function favicon(url) {
+ try { return 'https://www.google.com/s2/favicons?domain_url='+encodeURIComponent(new URL(url).origin)+'&sz=64'; } catch { return ''; }
+}
+function renderShortcuts() {
+ const root=$('shortcuts'); root.replaceChildren();
+ settings.shortcuts.forEach((item,index)=>{
+  const a=document.createElement('a'); a.className='shortcut'; a.href=item.url; a.title=item.name;
+  a.target='_blank'; a.rel='noopener noreferrer'; a.setAttribute('aria-label',item.name);
+  const icon=document.createElement('span'); icon.className='shortcut-icon';
+  const img=document.createElement('img'); img.alt=''; img.loading='lazy'; img.src=favicon(item.url);
+  img.onerror=()=>{img.remove();icon.textContent=item.icon || item.name.slice(0,1).toUpperCase();};
+  icon.append(img);
+  const name=document.createElement('span'); name.className='shortcut-name'; name.textContent=item.name;
+  const remove=document.createElement('button'); remove.type='button'; remove.className='remove'; remove.textContent='×'; remove.setAttribute('aria-label','Remove '+item.name);
+  remove.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();settings.shortcuts.splice(index,1);save();renderShortcuts();toast('Shortcut removed');});
+  a.append(icon,name,remove);
+  if(editing) a.addEventListener('click',event=>event.preventDefault());
+  root.append(a);
+ });
+ const add=document.createElement('button'); add.type='button'; add.className='shortcut add'; add.innerHTML='<span class="shortcut-icon">+</span><span class="shortcut-name">Add</span>';
+ add.addEventListener('click',()=>{openSettings();$('shortcutName').focus();});
+ root.append(add);
+ document.body.classList.toggle('editing',editing);
+ $('editBtn').hidden=!settings.shortcuts.length && !editing;
+ $('editBtn').title=editing?'Done editing':'Edit shortcuts';
+ $('editBtn').setAttribute('aria-label',editing?'Done editing shortcuts':'Edit shortcuts');
+}
+function openSettings(){document.body.classList.add('settings-open');$('drawer').setAttribute('aria-hidden','false');}
+function closeSettings(){document.body.classList.remove('settings-open');$('drawer').setAttribute('aria-hidden','true');}
+function syncForm(){ $('engine').value=settings.engine; $('newTab').checked=settings.newTab; applyAppearance(); }
+function load(){
+ try { const saved=JSON.parse(localStorage.getItem('minimal-home-settings-v1')); if(saved && typeof saved==='object') settings={...structuredClone(DEFAULTS),...saved,shortcuts:Array.isArray(saved.shortcuts)?saved.shortcuts.filter(x=>x&&typeof x.name==='string'&&safeUrl(x.url)).slice(0,24):structuredClone(DEFAULTS.shortcuts)}; } catch {}
+ syncForm();renderShortcuts();
+}
+$('settingsBtn').addEventListener('click',openSettings);
+$('closeSettings').addEventListener('click',closeSettings);
+$('backdrop').addEventListener('click',closeSettings);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSettings();editing=false;renderShortcuts();}});
+$('searchForm').addEventListener('submit',e=>{
+ e.preventDefault();const q=$('searchInput').value.trim();if(!q)return;
+ const url=settings.engine+encodeURIComponent(q);
+ if(settings.newTab)window.open(url,'_blank','noopener');else location.href=url;
+});
+$('overlay').addEventListener('input',e=>{settings.overlay=Number(e.target.value);$('overlayValue').textContent=settings.overlay+'%';applyAppearance();save();});
+$('blur').addEventListener('input',e=>{settings.blur=Number(e.target.value);$('blurValue').textContent=settings.blur+'px';applyAppearance();save();});
+$('accent').addEventListener('input',e=>{settings.accent=e.target.value;applyAppearance();save();});
+$('engine').addEventListener('change',e=>{settings.engine=e.target.value;save();});
+$('newTab').addEventListener('change',e=>{settings.newTab=e.target.checked;save();});
+$('applyWallpaper').addEventListener('click',()=>{
+ const url=$('wallpaperUrl').value.trim();
+ if(!url){toast('Paste a direct image URL first');return;}
+ const valid=safeUrl(url);if(!valid){toast('Use a valid http or https image URL');return;}
+ const image=new Image();image.onload=()=>{settings.wallpaper=valid;applyAppearance();save();toast('Wallpaper updated');};image.onerror=()=>toast('Could not load that image URL');image.src=valid;
+});
+$('resetWallpaper').addEventListener('click',()=>{settings.wallpaper='';applyAppearance();save();toast('Wallpaper reset');});
+$('addShortcut').addEventListener('click',()=>{
+ const name=$('shortcutName').value.trim(),url=safeUrl($('shortcutUrl').value.trim());
+ if(!name){toast('Enter a shortcut name');$('shortcutName').focus();return;}
+ if(!url){toast('Enter a valid website URL, including https://');$('shortcutUrl').focus();return;}
+ if(settings.shortcuts.length>=24){toast('Shortcut limit reached (24)');return;}
+ settings.shortcuts.push({name,url,icon:name.slice(0,1).toUpperCase()});save();renderShortcuts();
+ $('shortcutName').value='';$('shortcutUrl').value='';toast('Shortcut added');
+});
+$('editBtn').addEventListener('click',()=>{editing=!editing;renderShortcuts();if(editing)toast('Tap × to remove shortcuts');});
+$('editShortcuts').addEventListener('click',()=>{editing=!editing;renderShortcuts();toast(editing?'Tap × to remove shortcuts':'Shortcut editing finished');});
+$('exportSettings').addEventListener('click',()=>{
+ const blob=new Blob([JSON.stringify(settings,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='homepage-settings.json';a.click();URL.revokeObjectURL(a.href);toast('Settings exported');
+});
+$('importSettings').addEventListener('click',()=>$('importFile').click());
+$('importFile').addEventListener('change',async e=>{
+ const file=e.target.files?.[0];if(!file)return;
+ try{const data=JSON.parse(await file.text());if(!data||typeof data!=='object'||!Array.isArray(data.shortcuts))throw Error();
+ settings={...structuredClone(DEFAULTS),...data,wallpaper:safeUrl(data.wallpaper||'')||'',shortcuts:data.shortcuts.filter(x=>x&&typeof x.name==='string'&&safeUrl(x.url)).slice(0,24)};
+ syncForm();save();renderShortcuts();toast('Settings imported');
+ }catch{toast('That settings file is not valid');}
+ e.target.value='';
+});
+$('resetAll').addEventListener('click',()=>{
+ if(!confirm('Reset wallpaper, search settings and shortcuts to defaults?'))return;
+ settings=structuredClone(DEFAULTS);editing=false;syncForm();save();renderShortcuts();toast('Defaults restored');
+});
+load();
+})();
+</script>
+</body>
+</html>
