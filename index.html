@@ -1,236 +1,1661 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="theme-color" content="#101114">
-<title>Home</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#05030b">
+<title>Nightspace</title>
 <style>
-:root{color-scheme:dark;--accent:#d9d9df;--glass:rgba(16,17,20,.48);--line:rgba(255,255,255,.16);--text:#f6f6f7;--muted:rgba(255,255,255,.7)}
-*{box-sizing:border-box}
-html,body{margin:0;width:100%;min-height:100%;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#101114;color:var(--text)}
-body{min-height:100svh;overflow:hidden}
-button,input,select{font:inherit}
-button{cursor:pointer}
-.wallpaper{position:fixed;inset:0;background:#15161a center/cover no-repeat;z-index:-3;transform:scale(1.015);transition:filter .2s}
-.scrim{position:fixed;inset:0;background:rgba(0,0,0,.22);z-index:-2;pointer-events:none;transition:background .2s}
-.topbar{position:fixed;top:0;right:0;left:0;padding:calc(18px + env(safe-area-inset-top)) 20px 16px;display:flex;justify-content:flex-end;align-items:center;gap:10px}
-.icon-btn{width:42px;height:42px;border:1px solid var(--line);border-radius:50%;background:rgba(12,13,16,.25);color:white;display:grid;place-items:center;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);transition:background .18s,transform .18s}
-.icon-btn:hover{background:rgba(12,13,16,.55)}.icon-btn:active{transform:scale(.96)}
-.icon-btn svg{width:19px;height:19px}
-main{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 20px calc(42px + env(safe-area-inset-bottom));gap:22px}
-.search-wrap{width:min(600px,100%)}
-.search{display:flex;align-items:center;gap:12px;padding:0 17px;min-height:58px;border:1px solid rgba(255,255,255,.22);border-radius:18px;background:var(--glass);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);box-shadow:0 10px 36px rgba(0,0,0,.12);transition:border-color .2s,background .2s}
-.search:focus-within{border-color:rgba(255,255,255,.55);background:rgba(12,13,16,.66)}
-.search svg{width:20px;height:20px;flex:none;color:rgba(255,255,255,.8)}
-.search input{width:100%;min-width:0;border:0;outline:0;background:transparent;color:white;font-size:16px;padding:17px 0}
-.search input::placeholder{color:rgba(255,255,255,.72)}
-.search button{border:0;background:transparent;color:rgba(255,255,255,.72);padding:8px 0 8px 8px;font-size:13px}
-.shortcuts{width:min(600px,100%);display:flex;justify-content:center;align-items:flex-start;flex-wrap:wrap;gap:9px}
-.shortcut{position:relative;width:82px;min-height:92px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:9px;padding:7px 4px 9px;text-decoration:none;color:white;border-radius:14px;background:transparent;transition:background .18s}
-.shortcut:hover,.shortcut:focus-visible{background:rgba(10,11,14,.35);outline:none}
-.shortcut-icon{width:48px;height:48px;border:1px solid rgba(255,255,255,.19);border-radius:16px;background:rgba(12,13,16,.38);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:grid;place-items:center;font-size:18px;font-weight:600;overflow:hidden}
-.shortcut-icon img{width:22px;height:22px;object-fit:contain}
-.shortcut-name{max-width:76px;font-size:12px;line-height:1.25;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-shadow:0 1px 8px rgba(0,0,0,.5)}
-.shortcut .remove{display:none;position:absolute;top:0;right:2px;width:22px;height:22px;border:1px solid var(--line);border-radius:50%;background:rgba(12,13,16,.8);color:white;font-size:15px;line-height:1}
-body.editing .shortcut .remove{display:block}
-.shortcut.add{display:none}
-body.editing .shortcut.add{display:flex}
-.shortcut.add .shortcut-icon{border-style:dashed;color:rgba(255,255,255,.85);font-size:24px;font-weight:300}
-.hint{font-size:12px;color:rgba(255,255,255,.55);text-align:center}
-.drawer-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.48);opacity:0;pointer-events:none;transition:opacity .22s;z-index:5}
-.drawer{position:fixed;z-index:6;top:0;right:0;bottom:0;width:min(390px,100%);padding:calc(20px + env(safe-area-inset-top)) 20px calc(24px + env(safe-area-inset-bottom));background:rgba(20,21,25,.96);border-left:1px solid rgba(255,255,255,.1);backdrop-filter:blur(24px);-webkit-backdrop-filter:blur(24px);transform:translateX(102%);transition:transform .24s ease;overflow:auto}
-body.settings-open .drawer-backdrop{opacity:1;pointer-events:auto}
-body.settings-open .drawer{transform:translateX(0)}
-.drawer-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
-.drawer-head h1{font-size:18px;font-weight:600;margin:0}
-.section{padding:17px 0;border-top:1px solid rgba(255,255,255,.1)}
-.section h2{font-size:12px;text-transform:uppercase;letter-spacing:.11em;color:rgba(255,255,255,.56);font-weight:600;margin:0 0 14px}
-.field{display:flex;flex-direction:column;gap:8px;margin:0 0 15px}
-.field:last-child{margin-bottom:0}
-.field label,.field-label{font-size:13px;color:rgba(255,255,255,.86)}
-.field input[type="text"],.field input[type="url"],.field select{width:100%;min-height:43px;padding:10px 12px;border:1px solid rgba(255,255,255,.14);border-radius:11px;background:#222329;color:#fff;outline:none}
-.field input:focus,.field select:focus{border-color:rgba(255,255,255,.5)}
-.field input[type="range"]{width:100%;accent-color:var(--accent)}
-.field input[type="color"]{width:46px;height:36px;border:0;padding:0;background:transparent}
-.inline{display:flex;align-items:center;gap:12px}
-.inline .grow{flex:1;min-width:0}
-.check-row{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:13px;color:rgba(255,255,255,.86);padding:3px 0}
-.check-row input{accent-color:var(--accent);width:17px;height:17px}
-.btn{border:1px solid rgba(255,255,255,.15);border-radius:11px;background:rgba(255,255,255,.08);color:white;padding:11px 13px;font-size:13px}
-.btn.primary{background:#f0f0f2;color:#17181b;border-color:#f0f0f2;font-weight:600}
-.btn:active{transform:scale(.99)}
-.btn-row{display:flex;gap:8px;flex-wrap:wrap}
-.shortcut-form{display:grid;grid-template-columns:1fr 1fr;gap:9px}
-.shortcut-form .wide{grid-column:1/-1}
-.note{font-size:12px;color:rgba(255,255,255,.48);line-height:1.5;margin-top:10px}
-.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom));transform:translate(-50%,12px);opacity:0;pointer-events:none;padding:10px 14px;border-radius:12px;background:rgba(16,17,20,.86);border:1px solid var(--line);color:#fff;font-size:13px;backdrop-filter:blur(16px);transition:all .2s;z-index:10}
-.toast.show{opacity:1;transform:translate(-50%,0)}
-@media(max-width:480px){main{gap:17px;padding-left:16px;padding-right:16px}.search{min-height:54px;border-radius:16px}.shortcuts{gap:4px}.shortcut{width:72px;min-height:85px}.shortcut-icon{width:45px;height:45px;border-radius:15px}.topbar{padding-left:15px;padding-right:15px}.drawer{padding-left:17px;padding-right:17px}}
-@media(prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;scroll-behavior:auto!important}}
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;padding:0;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+  :root{
+    --accent:#8b5cf6;
+    --text:#eae8f6;
+    --muted:#a9a3cc;
+    --radius:18px;
+    --panel-bg:rgba(12,9,22,.6);
+    --panel-blur:20px;
+    --widget-bg:rgba(12,9,22,.45);
+    --border:rgba(255,255,255,.08);
+    --shadow:0 18px 50px rgba(0,0,0,.45);
+    --font:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+    --fs:15px;
+    --pad:16px;
+    --gap:14px;
+    --ls:0px;
+  }
+  body{
+    font-family:var(--font);font-size:var(--fs);letter-spacing:var(--ls);
+    color:var(--text);background:#05030b;overflow:hidden;
+    -webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent;
+  }
+  body.dragging{user-select:none;-webkit-user-select:none;cursor:grabbing}
+  a{color:var(--accent)}
+
+  /* ---------- background ---------- */
+  #wallpaper{
+    position:fixed;inset:0;z-index:0;
+    background-color:#05030b;background-position:50% 50%;background-repeat:no-repeat;background-size:cover;
+    transform-origin:center center;will-change:filter,transform;
+  }
+  #overlay{position:fixed;inset:0;z-index:1;pointer-events:none}
+
+  /* ---------- stage & widgets ---------- */
+  #stage{
+    position:fixed;top:0;left:0;right:0;height:100vh;height:100dvh;z-index:5;
+    overflow-x:hidden;overflow-y:auto;
+    -webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+    touch-action:pan-y;
+  }
+  #canvas{position:relative;width:100%;height:100%;min-height:100%}
+  .widget{
+    position:absolute;border-radius:var(--radius);
+    touch-action:pan-y;cursor:grab;
+  }
+  .widget.dragging{cursor:grabbing}
+  .widget.hidden{display:none}
+  .card{
+    background:var(--widget-bg);
+    -webkit-backdrop-filter:blur(var(--panel-blur));backdrop-filter:blur(var(--panel-blur));
+    border:1px solid var(--border);box-shadow:var(--shadow);
+    padding:var(--pad);display:flex;flex-direction:column;overflow:hidden;
+  }
+  .grip{
+    position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+    width:46px;height:5px;border-radius:99px;background:rgba(255,255,255,.35);
+    box-shadow:0 1px 5px rgba(0,0,0,.45);
+    opacity:0;transition:opacity .18s ease;cursor:grab;z-index:6;touch-action:none;
+  }
+  .card .grip{top:6px}
+  .widget:hover .grip{opacity:1}
+  body.locked .grip{display:none}
+  .rs{
+    position:absolute;right:-2px;bottom:-2px;width:20px;height:20px;z-index:7;
+    cursor:nwse-resize;opacity:0;transition:opacity .18s ease;touch-action:none;
+  }
+  .rs::after{
+    content:"";position:absolute;right:4px;bottom:4px;width:9px;height:9px;
+    border-right:2px solid rgba(255,255,255,.45);border-bottom:2px solid rgba(255,255,255,.45);
+    border-radius:0 0 3px 0;
+  }
+  .widget:hover .rs{opacity:1}
+  body.locked .rs{display:none}
+  .wtitle{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:8px;flex:none}
+  .wtitle .sp{flex:1}
+
+  /* ---------- clock ---------- */
+  #clockTime{font-variant-numeric:tabular-nums;line-height:1;font-weight:600}
+  #clockDate{color:var(--muted);margin-top:8px;line-height:1.3}
+  #w-clock{padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+
+  /* ---------- search ---------- */
+  #w-search{padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none;display:flex}
+  #searchForm{width:100%;display:flex;align-items:center}
+  #searchInput{
+    width:100%;border:1px solid var(--border);outline:none;
+    color:var(--text);font-family:var(--font);font-size:15px;
+    padding:0 18px;transition:border-color .2s,box-shadow .2s;
+  }
+  #searchInput::placeholder{color:var(--muted);opacity:.85}
+  #searchInput:focus{border-color:var(--accent);box-shadow:0 0 0 4px rgba(139,92,246,.18)}
+
+  /* ---------- shortcuts ---------- */
+  #w-shortcuts{padding:0;background:none;border:0;box-shadow:none;backdrop-filter:none;-webkit-backdrop-filter:none}
+  #scGrid{display:flex;flex-wrap:wrap}
+  .sc{
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;
+    text-decoration:none;color:var(--text);cursor:pointer;
+    background:var(--widget-bg);border:1px solid var(--border);
+    -webkit-backdrop-filter:blur(var(--panel-blur));backdrop-filter:blur(var(--panel-blur));
+    transition:transform .16s ease,border-color .16s ease,background .16s ease;
+    padding:8px;overflow:hidden;
+  }
+  .sc:hover{transform:translateY(-3px);border-color:var(--accent)}
+  .sc:active{transform:scale(.96)}
+  .sc .ico{width:55%;height:55%;display:flex;align-items:center;justify-content:center;font-size:20px;overflow:hidden}
+  .sc .ico img{width:100%;height:100%;object-fit:contain;border-radius:6px}
+  .sc .nm{font-size:11px;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+  /* ---------- quote / news / notes ---------- */
+  #quoteText{
+    font-size:1em;line-height:1.5;overflow:auto;flex:1;min-height:0;touch-action:pan-y;
+    display:flex;align-items:center;
+  }
+  #quoteAuthor{margin-top:10px;color:var(--accent);font-size:.82em;flex:none}
+  #newsList{-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y;flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:9px;margin-right:-6px;padding-right:6px}
+  .newsitem{font-size:.86em;line-height:1.35;color:var(--text);text-decoration:none;border-left:2px solid transparent;padding-left:9px;transition:.15s}
+  .newsitem:hover{border-left-color:var(--accent);color:#fff}
+  #notesArea{
+    flex:1;min-height:0;width:100%;resize:none;border:0;outline:none;background:transparent;
+    color:var(--text);font-family:var(--font);font-size:.92em;line-height:1.5;touch-action:pan-y;
+  }
+  .muted{color:var(--muted)}
+  .small{font-size:.82em}
+  .btn{
+    border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);
+    border-radius:10px;padding:7px 11px;font-size:12px;font-family:inherit;cursor:pointer;transition:.15s;
+  }
+  .btn:hover{background:rgba(255,255,255,.12);border-color:var(--accent)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{filter:brightness(1.1)}
+  .btn.ghost{background:transparent}
+  .mini{
+    border:1px solid var(--border);background:rgba(255,255,255,.05);color:var(--muted);
+    border-radius:7px;padding:3px 7px;font-size:10.5px;font-family:inherit;cursor:pointer;
+  }
+  .mini:hover{color:#fff;border-color:var(--accent)}
+
+  /* ---------- toolbar ---------- */
+  #toolbar{
+    position:fixed;right:18px;bottom:calc(18px + env(safe-area-inset-bottom, 0px));
+    z-index:800;display:flex;gap:9px;align-items:center;
+  }
+  #toolbar button{
+    width:44px;height:44px;border-radius:14px;border:1px solid var(--border);
+    background:rgba(12,9,22,.66);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);
+    color:var(--text);cursor:pointer;display:flex;align-items:center;justify-content:center;
+    box-shadow:0 10px 26px rgba(0,0,0,.4);transition:.16s;
+  }
+  #toolbar button:hover{border-color:var(--accent);transform:translateY(-2px)}
+  #toolbar button.on{border-color:var(--accent);color:var(--accent)}
+  #toolbar svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+
+  /* ---------- settings panel ---------- */
+  #scrim{position:fixed;inset:0;background:rgba(3,2,8,.5);z-index:850;opacity:0;pointer-events:none;transition:opacity .28s}
+  #scrim.on{opacity:1;pointer-events:auto}
+  #panel{
+    position:fixed;top:0;right:0;height:100%;height:100dvh;width:min(400px,100vw);z-index:900;
+    background:rgba(9,7,16,.94);-webkit-backdrop-filter:blur(26px);backdrop-filter:blur(26px);
+    border-left:1px solid rgba(255,255,255,.08);display:flex;flex-direction:column;
+    transform:translateX(102%);transition:transform .3s cubic-bezier(.3,.8,.3,1);
+    box-shadow:-20px 0 60px rgba(0,0,0,.5);
+  }
+  #panel.open{transform:none}
+  #panelHead{display:flex;align-items:center;gap:10px;padding:16px 16px 10px}
+  #panelHead h2{margin:0;font-size:15px;font-weight:600;letter-spacing:.01em;flex:1}
+  #panelHead .x{width:30px;height:30px;border-radius:9px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;font-size:16px;line-height:1}
+  #panelHead .x:hover{color:#fff;border-color:var(--accent)}
+  #tabs{display:flex;gap:6px;overflow-x:auto;padding:0 14px 12px;flex:none;scrollbar-width:none}
+  #tabs::-webkit-scrollbar{display:none}
+  #tabs button{
+    flex:none;border:1px solid var(--border);background:transparent;color:var(--muted);
+    border-radius:99px;padding:6px 12px;font-size:12px;font-family:inherit;cursor:pointer;white-space:nowrap;
+  }
+  #tabs button.on{background:var(--accent);border-color:var(--accent);color:#fff}
+  #panelBody{
+    flex:1;overflow-y:auto;padding:4px 16px calc(30px + env(safe-area-inset-bottom, 0px));
+    scrollbar-width:thin;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+  }
+  #panelBody::-webkit-scrollbar{width:8px}
+  #panelBody::-webkit-scrollbar-thumb{background:rgba(255,255,255,.13);border-radius:9px}
+  .pane{display:none;animation:fade .22s ease}
+  .pane.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .sect{margin:0 0 18px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.06)}
+  .sect:last-child{border-bottom:0}
+  .sect h3{margin:0 0 12px;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--muted);font-weight:600}
+  .row{display:grid;grid-template-columns:1fr 120px 40px;align-items:center;gap:10px;margin-bottom:11px;font-size:12.5px}
+  .row.two{grid-template-columns:1fr 120px}
+  .row.wide{grid-template-columns:1fr}
+  .row label{color:var(--text);opacity:.92;line-height:1.25}
+  .row .val{font-size:11px;color:var(--muted);text-align:right;font-variant-numeric:tabular-nums}
+  input[type=range]{
+    -webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;
+    background:rgba(255,255,255,.14);outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--accent);
+    cursor:pointer;border:2px solid #0b0813;box-shadow:0 0 0 1px rgba(255,255,255,.15);
+  }
+  input[type=range]::-moz-range-thumb{width:13px;height:13px;border:2px solid #0b0813;border-radius:50%;background:var(--accent);cursor:pointer}
+  input[type=number],input[type=text],input[type=url],select{
+    width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);
+    color:var(--text);border-radius:9px;padding:7px 9px;font-size:12.5px;font-family:inherit;outline:none;
+  }
+  input[type=number]:focus,input[type=text]:focus,input[type=url]:focus,select:focus{border-color:var(--accent)}
+  select option{background:#120e1f;color:var(--text)}
+  input[type=color]{
+    -webkit-appearance:none;appearance:none;width:100%;height:30px;padding:0;border:1px solid rgba(255,255,255,.12);
+    border-radius:8px;background:transparent;cursor:pointer;
+  }
+  input[type=color]::-webkit-color-swatch-wrapper{padding:2px}
+  input[type=color]::-webkit-color-swatch{border:none;border-radius:6px}
+  input[type=color]::-moz-color-swatch{border:none;border-radius:6px}
+  .sw{position:relative;display:inline-block;width:40px;height:22px;flex:none;cursor:pointer}
+  .sw input{position:absolute;opacity:0;width:0;height:0}
+  .sw span{position:absolute;inset:0;background:rgba(255,255,255,.16);border-radius:99px;transition:.2s}
+  .sw span::after{content:"";position:absolute;width:16px;height:16px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s}
+  .sw input:checked + span{background:var(--accent)}
+  .sw input:checked + span::after{transform:translateX(18px)}
+  .grid4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px}
+  .grid4 label{font-size:10.5px;color:var(--muted);display:flex;flex-direction:column;gap:4px}
+  .wrow{border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:10px;margin-bottom:9px;background:rgba(255,255,255,.02)}
+  .whead{display:flex;align-items:center;gap:8px;font-size:12.5px}
+  .whead strong{flex:1;font-weight:600}
+  .wacts{display:flex;align-items:center;gap:5px}
+  .scrow{display:grid;grid-template-columns:26px 1fr auto;gap:7px;align-items:center;margin-bottom:8px;
+    border:1px solid rgba(255,255,255,.07);border-radius:11px;padding:8px;background:rgba(255,255,255,.02)}
+  .scrow .ord{font-size:10px;color:var(--muted);text-align:center}
+  .scrow .fields{display:grid;gap:5px}
+  .scrow .acts{display:grid;gap:4px}
+  .swatches{display:flex;gap:7px;flex-wrap:wrap;margin-top:8px}
+  .swatches button{width:26px;height:26px;border-radius:8px;border:1px solid rgba(255,255,255,.18);cursor:pointer}
+  .hint{font-size:11px;line-height:1.5;color:var(--muted);margin:8px 0 0}
+  .btnrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  #toast{
+    position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);z-index:1000;
+    background:rgba(16,12,28,.95);border:1px solid rgba(255,255,255,.12);color:var(--text);
+    padding:10px 16px;border-radius:12px;font-size:12.5px;opacity:0;pointer-events:none;
+    transition:opacity .25s,transform .25s;box-shadow:0 14px 40px rgba(0,0,0,.5);max-width:88vw;text-align:center;
+  }
+  #toast.on{opacity:1;transform:translate(-50%,0)}
+  @media (max-width:640px){
+    .row{grid-template-columns:1fr 100px 36px}
+    #toolbar{right:12px;bottom:calc(12px + env(safe-area-inset-bottom, 0px))}
+  }
+  /* touch screens: no hover, so show the handles and stop iOS zoom-on-focus */
+  @media (hover:none), (pointer:coarse){
+    .grip{
+      opacity:.55;width:52px;height:6px;top:5px;background:rgba(255,255,255,.42);
+    }
+    .card .grip{top:6px}
+    .widget:not(.card) .grip{top:-9px}
+    .rs{opacity:.4;width:32px;height:32px}
+    .rs::after{width:11px;height:11px}
+    #searchInput{font-size:16px}
+    .sc .nm{font-size:10px}
+    .widget:hover .grip{opacity:.75}
+    .widget:hover .rs{opacity:.6}
+  }
+  @media (prefers-reduced-motion:reduce){
+    *{transition-duration:.01ms !important;animation-duration:.01ms !important}
+  }
 </style>
 </head>
 <body>
-<div class="wallpaper" id="wallpaper"></div><div class="scrim" id="scrim"></div>
-<header class="topbar">
-<button class="icon-btn" id="editBtn" aria-label="Edit shortcuts" title="Edit shortcuts" hidden>
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>
-</button>
-<button class="icon-btn" id="settingsBtn" aria-label="Settings" title="Settings">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.5.9l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.5-.9l-1.7.6-1.4-2.4 1.4-1.1a7 7 0 0 1 0-1.8l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.5-.9l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.5.9l1.7-.6 1.4 2.4-1.4 1.1a7 7 0 0 1 0 1.7Z" transform="translate(-1 -1) scale(1.05)"/></svg>
-</button>
-</header>
-<main>
-<form class="search-wrap" id="searchForm" role="search">
-<div class="search">
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="10.8" cy="10.8" r="6.8"/><path d="m16 16 4.5 4.5"/></svg>
-<input id="searchInput" type="text" placeholder="Search the web" autocomplete="off" aria-label="Search the web">
-<button type="submit" aria-label="Submit search">↵</button>
+
+<div id="wallpaper"></div>
+<div id="overlay"></div>
+
+<div id="stage">
+ <div id="canvas">
+  <!-- CLOCK -->
+  <div class="widget" data-w="clock" id="w-clock">
+    <div class="grip"></div>
+    <div id="clockTime">00:00</div>
+    <div id="clockDate"></div>
+    <div class="rs"></div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="widget" data-w="search" id="w-search">
+    <div class="grip"></div>
+    <form id="searchForm" autocomplete="off">
+      <input id="searchInput" type="text" spellcheck="false" placeholder="Search the web…">
+    </form>
+    <div class="rs"></div>
+  </div>
+
+  <!-- SHORTCUTS -->
+  <div class="widget" data-w="shortcuts" id="w-shortcuts">
+    <div class="grip"></div>
+    <div id="scGrid"></div>
+    <div class="rs"></div>
+  </div>
+
+  <!-- QUOTE -->
+  <div class="widget card" data-w="quote" id="w-quote">
+    <div class="grip"></div>
+    <div class="wtitle"><span>Quote</span><span class="sp"></span>
+      <button class="mini" id="quoteShuffle" type="button">Shuffle</button></div>
+    <div id="quoteText" data-nodrag></div>
+    <div id="quoteAuthor"></div>
+    <div class="rs"></div>
+  </div>
+
+  <!-- NEWS -->
+  <div class="widget card" data-w="news" id="w-news">
+    <div class="grip"></div>
+    <div class="wtitle"><span>News</span><span class="sp"></span>
+      <button class="mini" id="newsRefresh" type="button">Refresh</button></div>
+    <div id="newsList" data-nodrag></div>
+    <div class="rs"></div>
+  </div>
+
+  <!-- NOTES -->
+  <div class="widget card" data-w="notes" id="w-notes">
+    <div class="grip"></div>
+    <div class="wtitle"><span>Notes</span></div>
+    <textarea id="notesArea" placeholder="Jot something down…"></textarea>
+    <div class="rs"></div>
+  </div>
+ </div>
 </div>
-</form>
-<nav class="shortcuts" id="shortcuts" aria-label="Website shortcuts"></nav>
-</main>
-<div class="drawer-backdrop" id="backdrop"></div>
-<aside class="drawer" id="drawer" aria-label="Homepage settings" aria-hidden="true">
-<div class="drawer-head"><h1>Settings</h1><button class="icon-btn" id="closeSettings" aria-label="Close settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m6 6 12 12M18 6 6 18"/></svg></button></div>
-<section class="section"><h2>Appearance</h2>
-<div class="field"><label for="wallpaperUrl">Wallpaper image URL</label><input id="wallpaperUrl" type="url" placeholder="https://example.com/image.jpg" inputmode="url"><div class="btn-row"><button class="btn" id="applyWallpaper">Apply wallpaper</button><button class="btn" id="resetWallpaper">Reset</button></div><div class="note">Use a direct image link. Your browser loads it as the background.</div></div>
-<div class="field"><label for="overlay">Dark overlay <span id="overlayValue">22%</span></label><input id="overlay" type="range" min="0" max="75" value="22"></div>
-<div class="field"><label for="blur">Background blur <span id="blurValue">0px</span></label><input id="blur" type="range" min="0" max="12" value="0"></div>
-<div class="field"><label for="accent">Accent color</label><div class="inline"><input id="accent" type="color" value="#d9d9df"><span class="note grow">Used for small interface details.</span></div></div>
-</section>
-<section class="section"><h2>Search</h2>
-<div class="field"><label for="engine">Search engine</label><select id="engine"><option value="https://www.google.com/search?q=">Google</option><option value="https://duckduckgo.com/?q=">DuckDuckGo</option><option value="https://www.bing.com/search?q=">Bing</option><option value="https://search.brave.com/search?q=">Brave Search</option></select></div>
-<div class="check-row"><label for="newTab">Open searches in a new tab</label><input id="newTab" type="checkbox" checked></div>
-</section>
-<section class="section"><h2>Shortcuts</h2>
-<div class="field"><label for="shortcutName">Name</label><input id="shortcutName" type="text" placeholder="YouTube" maxlength="24"></div>
-<div class="field"><label for="shortcutUrl">Website URL</label><input id="shortcutUrl" type="url" placeholder="https://youtube.com" inputmode="url"></div>
-<div class="btn-row"><button class="btn primary" id="addShortcut">Add shortcut</button><button class="btn" id="editShortcuts">Manage shortcuts</button></div>
-<div class="note">In manage mode, use × on a shortcut to remove it. Shortcuts open in a new tab.</div>
-</section>
-<section class="section"><h2>Data</h2>
-<div class="btn-row"><button class="btn" id="exportSettings">Export settings</button><button class="btn" id="importSettings">Import settings</button><button class="btn" id="resetAll">Reset all</button><input id="importFile" type="file" accept="application/json,.json" hidden></div>
-<div class="note">Settings are saved on this device in this browser. Export a backup before clearing browser data.</div>
-</section>
+
+<div id="toolbar">
+  <button id="btnLock" title="Lock layout" aria-label="Lock layout">
+    <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+  </button>
+  <button id="btnSettings" title="Settings" aria-label="Settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-1.8-.3 1.6 1.6 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.6 1.6 0 0 0 9 19.4a1.6 1.6 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.6 1.6 0 0 0 .3-1.8 1.6 1.6 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.6 1.6 0 0 0 4.6 9a1.6 1.6 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 1.8.3H9a1.6 1.6 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 1 1.5 1.6 1.6 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0-.3 1.8V9a1.6 1.6 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1z"/></svg>
+  </button>
+</div>
+
+<div id="scrim"></div>
+
+<aside id="panel" aria-hidden="true">
+  <div id="panelHead">
+    <h2>Settings</h2>
+    <button class="x" id="btnClose" aria-label="Close settings">✕</button>
+  </div>
+  <div id="tabs">
+    <button data-tab="look" class="on">Wallpaper</button>
+    <button data-tab="clock">Clock</button>
+    <button data-tab="search">Search</button>
+    <button data-tab="links">Shortcuts</button>
+    <button data-tab="widgets">Widgets</button>
+    <button data-tab="style">Colors</button>
+    <button data-tab="type">Type</button>
+    <button data-tab="data">Data</button>
+  </div>
+  <div id="panelBody">
+
+    <!-- WALLPAPER -->
+    <div class="pane on" data-pane="look">
+      <div class="sect">
+        <h3>Wallpaper</h3>
+        <div class="btnrow">
+          <button class="btn primary" id="btnUpload">Upload image</button>
+          <button class="btn" id="btnWallRemove">Remove</button>
+        </div>
+        <input type="file" id="fileInput" accept="image/*" hidden>
+        <p class="hint">Uploads are resized and stored in this browser only. Large images may exceed the browser's storage limit — if saving fails, try a smaller picture.</p>
+        <div class="row wide" style="margin-top:12px">
+          <label>Or paste an image URL
+            <input type="url" id="wallUrl" placeholder="https://…/photo.jpg" style="margin-top:6px">
+          </label>
+        </div>
+        <div class="btnrow"><button class="btn" id="btnWallUrl">Use this URL</button></div>
+      </div>
+      <div class="sect">
+        <h3>Fit &amp; position</h3>
+        <div class="row two"><label>Fit</label>
+          <select data-bind="wallpaper.fit">
+            <option value="cover">Cover</option>
+            <option value="contain">Contain</option>
+            <option value="fill">Stretch</option>
+            <option value="tile">Tile</option>
+            <option value="center">Centre (actual size)</option>
+          </select>
+        </div>
+        <div class="row"><label>Horizontal focus</label><input type="range" data-bind="wallpaper.posX" min="0" max="100" step="1"><span class="val" data-val="wallpaper.posX"></span></div>
+        <div class="row"><label>Vertical focus</label><input type="range" data-bind="wallpaper.posY" min="0" max="100" step="1"><span class="val" data-val="wallpaper.posY"></span></div>
+      </div>
+      <div class="sect">
+        <h3>Treatment</h3>
+        <div class="row"><label>Blur</label><input type="range" data-bind="wallpaper.blur" min="0" max="30" step="0.5"><span class="val" data-val="wallpaper.blur"></span></div>
+        <div class="row"><label>Brightness</label><input type="range" data-bind="wallpaper.brightness" min="10" max="130" step="1"><span class="val" data-val="wallpaper.brightness"></span></div>
+        <div class="row"><label>Overlay colour</label><input type="color" data-bind="wallpaper.overlayColor"><span class="val"></span></div>
+        <div class="row"><label>Overlay strength</label><input type="range" data-bind="wallpaper.overlayOpacity" min="0" max="0.95" step="0.01"><span class="val" data-val="wallpaper.overlayOpacity"></span></div>
+        <div class="row"><label>Vignette</label><input type="range" data-bind="wallpaper.vignette" min="0" max="1" step="0.01"><span class="val" data-val="wallpaper.vignette"></span></div>
+      </div>
+    </div>
+
+    <!-- CLOCK -->
+    <div class="pane" data-pane="clock">
+      <div class="sect">
+        <h3>Clock</h3>
+        <div class="row two"><label>Show clock</label><label class="sw"><input type="checkbox" data-bind="clock.visible"><span></span></label></div>
+        <div class="row two"><label>Show seconds</label><label class="sw"><input type="checkbox" data-bind="clock.seconds"><span></span></label></div>
+        <div class="row two"><label>24-hour time</label><label class="sw"><input type="checkbox" data-bind="clock.h24"><span></span></label></div>
+        <div class="row two"><label>Show date</label><label class="sw"><input type="checkbox" data-bind="clock.showDate"><span></span></label></div>
+        <div class="row two"><label>Date style</label>
+          <select data-bind="clock.dateStyle">
+            <option value="long">Monday, 2 November 2026</option>
+            <option value="medium">2 Nov 2026</option>
+            <option value="numeric">02/11/2026</option>
+            <option value="iso">2026-11-02</option>
+            <option value="short">Mon 2 Nov</option>
+          </select>
+        </div>
+      </div>
+      <div class="sect">
+        <h3>Look</h3>
+        <div class="row"><label>Time size</label><input type="range" data-bind="clock.size" min="20" max="160" step="1"><span class="val" data-val="clock.size"></span></div>
+        <div class="row"><label>Weight</label><input type="range" data-bind="clock.weight" min="200" max="800" step="100"><span class="val" data-val="clock.weight"></span></div>
+        <div class="row"><label>Date size</label><input type="range" data-bind="clock.dateSize" min="9" max="40" step="1"><span class="val" data-val="clock.dateSize"></span></div>
+        <div class="row"><label>Colour</label><input type="color" data-bind="clock.color"><span class="val"></span></div>
+        <div class="row two"><label>Font</label>
+          <select data-bind="clock.font">
+            <option value="inherit">Match page</option>
+            <option value="system">System</option>
+            <option value="serif">Serif</option>
+            <option value="mono">Monospace</option>
+            <option value="rounded">Rounded</option>
+            <option value="condensed">Condensed</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEARCH -->
+    <div class="pane" data-pane="search">
+      <div class="sect">
+        <h3>Search bar</h3>
+        <div class="row two"><label>Show search bar</label><label class="sw"><input type="checkbox" data-bind="search.visible"><span></span></label></div>
+        <div class="row two"><label>Search engine</label>
+          <select data-bind="search.engine">
+            <option value="google">Google</option>
+            <option value="bing">Bing</option>
+            <option value="ddg">DuckDuckGo</option>
+            <option value="brave">Brave Search</option>
+            <option value="startpage">Startpage</option>
+            <option value="ecosia">Ecosia</option>
+          </select>
+        </div>
+        <div class="row wide"><label>Placeholder text<input type="text" data-bind="search.placeholder" style="margin-top:6px"></label></div>
+        <div class="row two"><label>Open results in a new tab</label><label class="sw"><input type="checkbox" data-bind="search.newTab"><span></span></label></div>
+      </div>
+      <div class="sect">
+        <h3>Shape</h3>
+        <div class="row"><label>Width</label><input type="range" data-bind="layout.search.w" min="180" max="900" step="5"><span class="val" data-val="layout.search.w"></span></div>
+        <div class="row"><label>Height</label><input type="range" data-bind="search.height" min="34" max="86" step="1"><span class="val" data-val="search.height"></span></div>
+        <div class="row"><label>Corner radius</label><input type="range" data-bind="search.radius" min="0" max="60" step="1"><span class="val" data-val="search.radius"></span></div>
+        <div class="row"><label>Background opacity</label><input type="range" data-bind="search.opacity" min="0" max="1" step="0.01"><span class="val" data-val="search.opacity"></span></div>
+        <div class="row"><label>Background blur</label><input type="range" data-bind="search.blur" min="0" max="30" step="1"><span class="val" data-val="search.blur"></span></div>
+        <div class="row"><label>Text colour</label><input type="color" data-bind="search.textColor"><span class="val"></span></div>
+      </div>
+    </div>
+
+    <!-- SHORTCUTS -->
+    <div class="pane" data-pane="links">
+      <div class="sect">
+        <h3>Shortcuts</h3>
+        <div class="row two"><label>Show shortcuts</label><label class="sw"><input type="checkbox" data-bind="shortcuts.visible"><span></span></label></div>
+        <div class="row two"><label>Show labels</label><label class="sw"><input type="checkbox" data-bind="shortcuts.showLabels"><span></span></label></div>
+        <div class="row two"><label>Fetch site icons automatically</label><label class="sw"><input type="checkbox" data-bind="shortcuts.favicons"><span></span></label></div>
+        <div class="row"><label>Tile size</label><input type="range" data-bind="shortcuts.size" min="34" max="110" step="1"><span class="val" data-val="shortcuts.size"></span></div>
+        <div class="row"><label>Tile radius</label><input type="range" data-bind="shortcuts.radius" min="0" max="40" step="1"><span class="val" data-val="shortcuts.radius"></span></div>
+        <div class="row"><label>Spacing</label><input type="range" data-bind="shortcuts.gap" min="2" max="34" step="1"><span class="val" data-val="shortcuts.gap"></span></div>
+      </div>
+      <div class="sect">
+        <h3>Your links</h3>
+        <div id="scList"></div>
+        <div class="btnrow"><button class="btn primary" id="btnAddSc">+ Add shortcut</button></div>
+        <p class="hint">Icon can be an emoji (🔮), a letter, or an image URL. Leave it empty to use the site's icon.</p>
+      </div>
+    </div>
+
+    <!-- WIDGETS -->
+    <div class="pane" data-pane="widgets">
+      <div class="sect">
+        <h3>Position &amp; size</h3>
+        <p class="hint">Drag any widget on the page, or type exact numbers here. Leave H empty for automatic height. Overlap is allowed — use Front / Back to set stacking.</p>
+        <div id="layoutList"></div>
+        <div class="btnrow">
+          <button class="btn" id="btnTidy">Auto-arrange widgets</button>
+          <button class="btn ghost" id="btnUnlockAll">Show all widgets</button>
+        </div>
+      </div>
+      <div class="sect">
+        <h3>Quote</h3>
+        <div class="row"><label>Text size</label><input type="range" data-bind="quote.size" min="10" max="30" step="1"><span class="val" data-val="quote.size"></span></div>
+        <div class="row two"><label>Rotate automatically</label><label class="sw"><input type="checkbox" data-bind="quote.rotate"><span></span></label></div>
+        <div class="row"><label>Change every (min)</label><input type="range" data-bind="quote.interval" min="1" max="180" step="1"><span class="val" data-val="quote.interval"></span></div>
+      </div>
+      <div class="sect">
+        <h3>News</h3>
+        <div class="row two"><label>Source</label>
+          <select data-bind="news.source">
+            <option value="hn">Hacker News</option>
+            <option value="rss">Custom RSS feed</option>
+          </select>
+        </div>
+        <div class="row wide"><label>RSS URL<input type="url" data-bind="news.rss" placeholder="https://example.com/feed.xml" style="margin-top:6px"></label></div>
+        <div class="row"><label>Items</label><input type="range" data-bind="news.count" min="3" max="15" step="1"><span class="val" data-val="news.count"></span></div>
+        <p class="hint">Browsers only load feeds that allow cross-site requests. Hacker News always works; many news feeds block it and will show an error instead.</p>
+      </div>
+      <div class="sect">
+        <h3>Notes</h3>
+        <p class="hint">Anything you type in the Notes widget is saved in this browser.</p>
+        <div class="btnrow"><button class="btn" id="btnClearNotes">Clear notes</button></div>
+      </div>
+    </div>
+
+    <!-- COLORS -->
+    <div class="pane" data-pane="style">
+      <div class="sect">
+        <h3>Accent</h3>
+        <div class="row"><label>Accent colour</label><input type="color" data-bind="theme.accent"><span class="val"></span></div>
+        <div class="swatches" id="swatches"></div>
+      </div>
+      <div class="sect">
+        <h3>Surfaces</h3>
+        <div class="row"><label>Widget colour</label><input type="color" data-bind="theme.widgetBg"><span class="val"></span></div>
+        <div class="row"><label>Widget opacity</label><input type="range" data-bind="theme.widgetOpacity" min="0" max="1" step="0.01"><span class="val" data-val="theme.widgetOpacity"></span></div>
+        <div class="row"><label>Border colour</label><input type="color" data-bind="theme.borderColor"><span class="val"></span></div>
+        <div class="row"><label>Border opacity</label><input type="range" data-bind="theme.borderOpacity" min="0" max="0.5" step="0.01"><span class="val" data-val="theme.borderOpacity"></span></div>
+        <div class="row"><label>Corner radius</label><input type="range" data-bind="theme.radius" min="0" max="40" step="1"><span class="val" data-val="theme.radius"></span></div>
+        <div class="row"><label>Blur behind widgets</label><input type="range" data-bind="theme.panelBlur" min="0" max="40" step="1"><span class="val" data-val="theme.panelBlur"></span></div>
+        <div class="row two"><label>Drop shadow</label><label class="sw"><input type="checkbox" data-bind="theme.shadow"><span></span></label></div>
+      </div>
+      <div class="sect">
+        <h3>Text</h3>
+        <div class="row"><label>Primary text</label><input type="color" data-bind="theme.text"><span class="val"></span></div>
+        <div class="row"><label>Secondary text</label><input type="color" data-bind="theme.muted"><span class="val"></span></div>
+      </div>
+    </div>
+
+    <!-- TYPE -->
+    <div class="pane" data-pane="type">
+      <div class="sect">
+        <h3>Typography</h3>
+        <div class="row two"><label>Page font</label>
+          <select data-bind="type.font">
+            <option value="system">System</option>
+            <option value="serif">Serif</option>
+            <option value="mono">Monospace</option>
+            <option value="rounded">Rounded</option>
+            <option value="condensed">Condensed</option>
+          </select>
+        </div>
+        <div class="row"><label>Base size</label><input type="range" data-bind="type.size" min="11" max="22" step="0.5"><span class="val" data-val="type.size"></span></div>
+        <div class="row"><label>Letter spacing</label><input type="range" data-bind="type.letterSpacing" min="-1" max="3" step="0.1"><span class="val" data-val="type.letterSpacing"></span></div>
+      </div>
+      <div class="sect">
+        <h3>Spacing</h3>
+        <div class="row"><label>Widget padding</label><input type="range" data-bind="type.padding" min="0" max="40" step="1"><span class="val" data-val="type.padding"></span></div>
+        <div class="row"><label>Widget gap</label><input type="range" data-bind="type.gap" min="0" max="40" step="1"><span class="val" data-val="type.gap"></span></div>
+      </div>
+    </div>
+
+    <!-- DATA -->
+    <div class="pane" data-pane="data">
+      <div class="sect">
+        <h3>Backup</h3>
+        <p class="hint">Everything lives in this browser. Export a backup to move your setup to another device.</p>
+        <div class="btnrow">
+          <button class="btn primary" id="btnExport">Export backup</button>
+          <button class="btn" id="btnImport">Import backup</button>
+        </div>
+        <input type="file" id="importInput" accept="application/json,.json" hidden>
+      </div>
+      <div class="sect">
+        <h3>Session</h3>
+        <div class="btnrow">
+          <button class="btn" id="btnSave">Save now</button>
+          <button class="btn" id="btnReset">Reset everything</button>
+        </div>
+        <p class="hint">Settings save automatically as you change them. Reset clears all preferences, wallpaper and notes from this browser.</p>
+      </div>
+      <div class="sect">
+        <h3>About storage</h3>
+        <p class="hint">Browser storage is limited to roughly 5&nbsp;MB per site, and an uploaded wallpaper can eat most of it. Private/incognito windows clear it when closed, and clearing site data erases your setup. Keep an exported backup if it matters.</p>
+      </div>
+    </div>
+
+  </div>
 </aside>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div id="toast"></div>
+
 <script>
-(() => {
-const $ = id => document.getElementById(id);
-const DEFAULTS = {
- wallpaper:'', overlay:22, blur:0, accent:'#d9d9df', engine:'https://www.google.com/search?q=', newTab:true,
- shortcuts:[
-  {name:'YouTube',url:'https://www.youtube.com',icon:'▶'},
-  {name:'GitHub',url:'https://github.com',icon:'⌘'},
-  {name:'Reddit',url:'https://www.reddit.com',icon:'r'},
-  {name:'ChatGPT',url:'https://chatgpt.com',icon:'✳'}
- ]
+(function(){
+"use strict";
+
+/* ============================ state ============================ */
+var LS_KEY = "nightspace.v1";
+
+var FONTS = {
+  system: 'system-ui,-apple-system,"Segoe UI",Roboto,sans-serif',
+  serif: 'Georgia,"Times New Roman",serif',
+  mono: 'ui-monospace,"SF Mono",Menlo,Consolas,monospace',
+  rounded: '"Trebuchet MS","Segoe UI",system-ui,sans-serif',
+  condensed: '"Arial Narrow","Helvetica Neue",Arial,sans-serif'
 };
-let settings = structuredClone(DEFAULTS);
-let editing = false;
-let toastTimer;
-function safeUrl(raw) {
- try { const u = new URL(raw); return ['http:','https:'].includes(u.protocol) ? u.href : null; } catch { return null; }
+
+var ENGINES = {
+  google: "https://www.google.com/search?q=",
+  bing: "https://www.bing.com/search?q=",
+  ddg: "https://duckduckgo.com/?q=",
+  brave: "https://search.brave.com/search?q=",
+  startpage: "https://www.startpage.com/sp/search?query=",
+  ecosia: "https://www.ecosia.org/search?q="
+};
+
+var DEFAULTS = {
+  v: 1,
+  wallpaper: { src:"", fit:"cover", posX:50, posY:50, blur:0, brightness:75,
+               overlayColor:"#06040d", overlayOpacity:0.45, vignette:0.35 },
+  theme: { accent:"#8b5cf6", text:"#eae8f6", muted:"#a9a3cc",
+           widgetBg:"#0c0916", widgetOpacity:0.45, borderColor:"#ffffff", borderOpacity:0.08,
+           radius:18, panelBlur:20, shadow:true },
+  type: { font:"system", size:15, padding:16, gap:14, letterSpacing:0 },
+  clock: { visible:true, showDate:true, h24:false, seconds:true, size:56, weight:600,
+           color:"#ffffff", font:"inherit", dateStyle:"long", dateSize:15 },
+  search: { visible:true, engine:"google", placeholder:"Search the web…", height:48,
+            radius:999, opacity:0.55, blur:16, newTab:true, textColor:"#f2f0fb" },
+  shortcuts: { visible:true, size:56, radius:16, showLabels:true, gap:14, favicons:true,
+    items: [
+      { name:"YouTube",  url:"https://www.youtube.com",  icon:"▶" },
+      { name:"Gmail",    url:"https://mail.google.com",  icon:"✉" },
+      { name:"GitHub",   url:"https://github.com",       icon:"" },
+      { name:"Reddit",   url:"https://www.reddit.com",   icon:"" },
+      { name:"Spotify",  url:"https://open.spotify.com", icon:"" },
+      { name:"Maps",     url:"https://maps.google.com",  icon:"◎" }
+    ] },
+  quote: { visible:true, rotate:true, interval:45, size:15 },
+  news:  { visible:true, source:"hn", rss:"", count:5 },
+  notes: { visible:true, text:"" },
+  ui:    { lock:false },
+  layout: {
+    clock:     { x:4,  y:5,  w:460, h:null, z:5 },
+    search:    { x:4,  y:20, w:420, h:null, z:4 },
+    shortcuts: { x:4,  y:31, w:600, h:null, z:3 },
+    quote:     { x:70, y:5,  w:330, h:170, z:2 },
+    news:      { x:70, y:24, w:330, h:300,  z:2 },
+    notes:     { x:4,  y:58, w:380, h:190,  z:1 }
+  }
+};
+
+DEFAULTS.layoutSm = clone(DEFAULTS.layout);
+
+var WIDGETS = ["clock","search","shortcuts","quote","news","notes"];
+var WNAMES = { clock:"Clock", search:"Search", shortcuts:"Shortcuts",
+               quote:"Quote", news:"News", notes:"Notes" };
+
+var QUOTES = [
+  ["The quieter you become, the more you are able to hear.","Ram Dass"],
+  ["Simplicity is the ultimate sophistication.","Leonardo da Vinci"],
+  ["We are what we repeatedly do. Excellence, then, is not an act but a habit.","Will Durant"],
+  ["It is not that we have a short time to live, but that we waste a lot of it.","Seneca"],
+  ["The best way out is always through.","Robert Frost"],
+  ["What you do every day matters more than what you do once in a while.","Gretchen Rubin"],
+  ["Nothing is so much to be feared as fear.","Henry David Thoreau"],
+  ["You do not rise to the level of your goals. You fall to the level of your systems.","James Clear"],
+  ["The obscure we see eventually. The completely obvious, it seems, takes longer.","Edward R. Murrow"],
+  ["Amateurs sit and wait for inspiration, the rest of us just get up and go to work.","Stephen King"],
+  ["A ship in harbour is safe, but that is not what ships are built for.","John A. Shedd"],
+  ["Tell me, what is it you plan to do with your one wild and precious life?","Mary Oliver"],
+  ["Perfection is achieved not when there is nothing more to add, but when there is nothing left to take away.","Antoine de Saint-Exupéry"],
+  ["The future depends on what you do today.","Mahatma Gandhi"],
+  ["Attention is the rarest and purest form of generosity.","Simone Weil"]
+];
+
+var S;
+var $ = function(sel, root){ return (root||document).querySelector(sel); };
+var $$ = function(sel, root){ return Array.prototype.slice.call((root||document).querySelectorAll(sel)); };
+
+function clone(o){ return JSON.parse(JSON.stringify(o)); }
+function isObj(v){ return v && typeof v === "object" && !Array.isArray(v); }
+function merge(base, patch){
+  var out = clone(base);
+  if(!isObj(patch)) return out;
+  Object.keys(patch).forEach(function(k){
+    if(isObj(out[k]) && isObj(patch[k])) out[k] = merge(out[k], patch[k]);
+    else if(patch[k] !== undefined) out[k] = patch[k];
+  });
+  return out;
 }
-function save() { try { localStorage.setItem('minimal-home-settings-v1', JSON.stringify(settings)); } catch {} }
-function toast(message) {
- const el=$('toast'); el.textContent=message; el.classList.add('show');
- clearTimeout(toastTimer); toastTimer=setTimeout(()=>el.classList.remove('show'),2200);
+function getPath(obj, path){
+  return path.split(".").reduce(function(o,k){ return (o == null) ? undefined : o[k]; }, obj);
 }
-function applyAppearance() {
- const wallpaper=$('wallpaper');
- wallpaper.style.backgroundImage=settings.wallpaper ? `url("${settings.wallpaper.replace(/["\\\n\r]/g,'')}")` : 'linear-gradient(145deg,#252a33,#111319 55%,#202027)';
- $('scrim').style.background=`rgba(0,0,0,${Number(settings.overlay)/100})`;
- wallpaper.style.filter=`blur(${Number(settings.blur)}px)`;
- document.documentElement.style.setProperty('--accent',settings.accent);
- $('overlay').value=settings.overlay; $('overlayValue').textContent=settings.overlay+'%';
- $('blur').value=settings.blur; $('blurValue').textContent=settings.blur+'px';
- $('wallpaperUrl').value=settings.wallpaper;
- $('accent').value=settings.accent;
+function setPath(obj, path, val){
+  var parts = path.split("."), last = parts.pop();
+  var t = parts.reduce(function(o,k){ if(!isObj(o[k])) o[k] = {}; return o[k]; }, obj);
+  t[last] = val;
 }
-function favicon(url) {
- try { return 'https://www.google.com/s2/favicons?domain_url='+encodeURIComponent(new URL(url).origin)+'&sz=64'; } catch { return ''; }
+function clamp(v, a, b){ return Math.min(b, Math.max(a, v)); }
+function hexA(hex, a){
+  var h = String(hex||"#000000").replace("#","");
+  if(h.length === 3) h = h.split("").map(function(c){ return c + c; }).join("");
+  var r = parseInt(h.slice(0,2),16) || 0,
+      g = parseInt(h.slice(2,4),16) || 0,
+      b = parseInt(h.slice(4,6),16) || 0;
+  return "rgba(" + r + "," + g + "," + b + "," + a + ")";
 }
-function renderShortcuts() {
- const root=$('shortcuts'); root.replaceChildren();
- settings.shortcuts.forEach((item,index)=>{
-  const a=document.createElement('a'); a.className='shortcut'; a.href=item.url; a.title=item.name;
-  a.target='_blank'; a.rel='noopener noreferrer'; a.setAttribute('aria-label',item.name);
-  const icon=document.createElement('span'); icon.className='shortcut-icon';
-  const img=document.createElement('img'); img.alt=''; img.loading='lazy'; img.src=favicon(item.url);
-  img.onerror=()=>{img.remove();icon.textContent=item.icon || item.name.slice(0,1).toUpperCase();};
-  icon.append(img);
-  const name=document.createElement('span'); name.className='shortcut-name'; name.textContent=item.name;
-  const remove=document.createElement('button'); remove.type='button'; remove.className='remove'; remove.textContent='×'; remove.setAttribute('aria-label','Remove '+item.name);
-  remove.addEventListener('click',event=>{event.preventDefault();event.stopPropagation();settings.shortcuts.splice(index,1);save();renderShortcuts();toast('Shortcut removed');});
-  a.append(icon,name,remove);
-  if(editing) a.addEventListener('click',event=>event.preventDefault());
-  root.append(a);
- });
- const add=document.createElement('button'); add.type='button'; add.className='shortcut add'; add.innerHTML='<span class="shortcut-icon">+</span><span class="shortcut-name">Add</span>';
- add.addEventListener('click',()=>{openSettings();$('shortcutName').focus();});
- root.append(add);
- document.body.classList.toggle('editing',editing);
- $('editBtn').hidden=!settings.shortcuts.length && !editing;
- $('editBtn').title=editing?'Done editing':'Edit shortcuts';
- $('editBtn').setAttribute('aria-label',editing?'Done editing shortcuts':'Edit shortcuts');
+function debounce(fn, ms){
+  var t; return function(){ var args = arguments, ctx = this;
+    clearTimeout(t); t = setTimeout(function(){ fn.apply(ctx, args); }, ms); };
 }
-function openSettings(){document.body.classList.add('settings-open');$('drawer').setAttribute('aria-hidden','false');}
-function closeSettings(){document.body.classList.remove('settings-open');$('drawer').setAttribute('aria-hidden','true');}
-function syncForm(){ $('engine').value=settings.engine; $('newTab').checked=settings.newTab; applyAppearance(); }
+
 function load(){
- try { const saved=JSON.parse(localStorage.getItem('minimal-home-settings-v1')); if(saved && typeof saved==='object') settings={...structuredClone(DEFAULTS),...saved,shortcuts:Array.isArray(saved.shortcuts)?saved.shortcuts.filter(x=>x&&typeof x.name==='string'&&safeUrl(x.url)).slice(0,24):structuredClone(DEFAULTS.shortcuts)}; } catch {}
- syncForm();renderShortcuts();
+  var raw = null;
+  try { raw = localStorage.getItem(LS_KEY); } catch(e){ raw = null; }
+  var parsed = null;
+  if(raw){ try { parsed = JSON.parse(raw); } catch(e){ parsed = null; } }
+  var state = merge(DEFAULTS, parsed || {});
+  // guarantee every widget has a layout record, in both desktop and phone layouts
+  state.layoutSm = state.layoutSm || {};
+  WIDGETS.forEach(function(id){
+    state.layout[id] = merge(DEFAULTS.layout[id], state.layout[id] || {});
+    state.layoutSm[id] = merge(DEFAULTS.layout[id], state.layoutSm[id] || {});
+    state[id] = merge(DEFAULTS[id], state[id] || {});
+  });
+  state.layout._arranged = !!state.layout._arranged;
+  state.layoutSm._arranged = !!state.layoutSm._arranged;
+  if(!Array.isArray(state.shortcuts.items)) state.shortcuts.items = clone(DEFAULTS.shortcuts.items);
+  if(!parsed) state.__firstRun = true;
+  return state;
 }
-$('settingsBtn').addEventListener('click',openSettings);
-$('closeSettings').addEventListener('click',closeSettings);
-$('backdrop').addEventListener('click',closeSettings);
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSettings();editing=false;renderShortcuts();}});
-$('searchForm').addEventListener('submit',e=>{
- e.preventDefault();const q=$('searchInput').value.trim();if(!q)return;
- const url=settings.engine+encodeURIComponent(q);
- if(settings.newTab)window.open(url,'_blank','noopener');else location.href=url;
-});
-$('overlay').addEventListener('input',e=>{settings.overlay=Number(e.target.value);$('overlayValue').textContent=settings.overlay+'%';applyAppearance();save();});
-$('blur').addEventListener('input',e=>{settings.blur=Number(e.target.value);$('blurValue').textContent=settings.blur+'px';applyAppearance();save();});
-$('accent').addEventListener('input',e=>{settings.accent=e.target.value;applyAppearance();save();});
-$('engine').addEventListener('change',e=>{settings.engine=e.target.value;save();});
-$('newTab').addEventListener('change',e=>{settings.newTab=e.target.checked;save();});
-$('applyWallpaper').addEventListener('click',()=>{
- const url=$('wallpaperUrl').value.trim();
- if(!url){toast('Paste a direct image URL first');return;}
- const valid=safeUrl(url);if(!valid){toast('Use a valid http or https image URL');return;}
- const image=new Image();image.onload=()=>{settings.wallpaper=valid;applyAppearance();save();toast('Wallpaper updated');};image.onerror=()=>toast('Could not load that image URL');image.src=valid;
-});
-$('resetWallpaper').addEventListener('click',()=>{settings.wallpaper='';applyAppearance();save();toast('Wallpaper reset');});
-$('addShortcut').addEventListener('click',()=>{
- const name=$('shortcutName').value.trim(),url=safeUrl($('shortcutUrl').value.trim());
- if(!name){toast('Enter a shortcut name');$('shortcutName').focus();return;}
- if(!url){toast('Enter a valid website URL, including https://');$('shortcutUrl').focus();return;}
- if(settings.shortcuts.length>=24){toast('Shortcut limit reached (24)');return;}
- settings.shortcuts.push({name,url,icon:name.slice(0,1).toUpperCase()});save();renderShortcuts();
- $('shortcutName').value='';$('shortcutUrl').value='';toast('Shortcut added');
-});
-$('editBtn').addEventListener('click',()=>{editing=!editing;renderShortcuts();if(editing)toast('Tap × to remove shortcuts');});
-$('editShortcuts').addEventListener('click',()=>{editing=!editing;renderShortcuts();toast(editing?'Tap × to remove shortcuts':'Shortcut editing finished');});
-$('exportSettings').addEventListener('click',()=>{
- const blob=new Blob([JSON.stringify(settings,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='homepage-settings.json';a.click();URL.revokeObjectURL(a.href);toast('Settings exported');
-});
-$('importSettings').addEventListener('click',()=>$('importFile').click());
-$('importFile').addEventListener('change',async e=>{
- const file=e.target.files?.[0];if(!file)return;
- try{const data=JSON.parse(await file.text());if(!data||typeof data!=='object'||!Array.isArray(data.shortcuts))throw Error();
- settings={...structuredClone(DEFAULTS),...data,wallpaper:safeUrl(data.wallpaper||'')||'',shortcuts:data.shortcuts.filter(x=>x&&typeof x.name==='string'&&safeUrl(x.url)).slice(0,24)};
- syncForm();save();renderShortcuts();toast('Settings imported');
- }catch{toast('That settings file is not valid');}
- e.target.value='';
-});
-$('resetAll').addEventListener('click',()=>{
- if(!confirm('Reset wallpaper, search settings and shortcuts to defaults?'))return;
- settings=structuredClone(DEFAULTS);editing=false;syncForm();save();renderShortcuts();toast('Defaults restored');
-});
-load();
+
+function snapshot(){
+  var data = clone(S);
+  delete data.__firstRun;
+  // the runtime swaps the two layouts on small screens; always store them
+  // under their own names so a reload lands on the right one
+  if(narrowMode && data.layoutSm){
+    var tmp = data.layout;
+    data.layout = data.layoutSm;
+    data.layoutSm = tmp;
+  }
+  return data;
+}
+
+function save(silent){
+  try {
+    var data = snapshot();
+    localStorage.setItem(LS_KEY, JSON.stringify(data));
+    return true;
+  } catch(err){
+    if(!silent) toast("Couldn't save — browser storage is full. Try a smaller wallpaper.");
+    return false;
+  }
+}
+var saveSoon = debounce(function(){ save(true); }, 400);
+
+/* ============================ elements ============================ */
+var stage = $("#stage"), canvas = $("#canvas"), wp = $("#wallpaper"), ov = $("#overlay"),
+    panel = $("#panel"), scrim = $("#scrim"), toastEl = $("#toast");
+
+/* ============================ toast ============================ */
+var toastTimer;
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add("on");
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ toastEl.classList.remove("on"); }, 2600);
+}
+
+/* ============================ apply ============================ */
+function apply(){
+  var r = document.documentElement.style, t = S.theme, ty = S.type;
+
+  r.setProperty("--accent", t.accent);
+  r.setProperty("--text", t.text);
+  r.setProperty("--muted", t.muted);
+  r.setProperty("--radius", t.radius + "px");
+  r.setProperty("--widget-bg", hexA(t.widgetBg, t.widgetOpacity));
+  r.setProperty("--border", hexA(t.borderColor, t.borderOpacity));
+  r.setProperty("--panel-blur", t.panelBlur + "px");
+  r.setProperty("--shadow", t.shadow ? "0 18px 50px rgba(0,0,0,.45)" : "none");
+  r.setProperty("--font", FONTS[ty.font] || FONTS.system);
+  r.setProperty("--fs", ty.size + "px");
+  r.setProperty("--pad", ty.padding + "px");
+  r.setProperty("--gap", ty.gap + "px");
+  r.setProperty("--ls", ty.letterSpacing + "px");
+
+  applyWallpaper();
+  applyClock();
+  applySearch();
+  applyShortcuts();
+  WIDGETS.forEach(function(id){
+    var el = $("#w-" + id);
+    if(el) el.classList.toggle("hidden", !S[id].visible);
+    applyLayout(id);
+  });
+  setCanvas(S.layout._canvas || 0);
+  if(narrowMode && !S.layout._custom) arrangeSoon();
+  document.body.classList.toggle("locked", !!S.ui.lock);
+  $("#btnLock").classList.toggle("on", !!S.ui.lock);
+  applyNewsSource();
+}
+
+function applyWallpaper(){
+  var w = S.wallpaper;
+  if(w.src){
+    wp.style.backgroundImage = 'url("' + w.src.replace(/"/g, '\\"') + '")';
+  } else {
+    wp.style.backgroundImage =
+      "radial-gradient(1200px 700px at 18% 8%, #241a44 0%, transparent 60%)," +
+      "radial-gradient(900px 620px at 84% 18%, #3a1430 0%, transparent 62%)," +
+      "radial-gradient(1000px 800px at 62% 96%, #10203f 0%, transparent 60%)," +
+      "linear-gradient(160deg, #0a0714 0%, #05030b 55%, #080511 100%)";
+  }
+  wp.style.backgroundSize = (w.fit === "tile") ? "auto" : w.fit;
+  wp.style.backgroundRepeat = (w.fit === "tile") ? "repeat" : "no-repeat";
+  wp.style.backgroundPosition = (w.fit === "center")
+      ? "50% 50%" : (w.posX + "% " + w.posY + "%");
+  wp.style.filter = "blur(" + w.blur + "px) brightness(" + w.brightness + "%)";
+  wp.style.transform = w.blur > 0 ? "scale(" + (1 + w.blur / 90) + ")" : "none";
+  ov.style.background =
+    "linear-gradient(" + hexA(w.overlayColor, w.overlayOpacity) + "," + hexA(w.overlayColor, w.overlayOpacity) + ")," +
+    "radial-gradient(circle at 50% 45%, transparent 40%, " + hexA("#000000", w.vignette) + " 100%)";
+}
+
+function applyClock(){
+  var c = S.clock, time = $("#clockTime"), date = $("#clockDate");
+  time.style.fontSize = c.size + "px";
+  time.style.fontWeight = c.weight;
+  time.style.color = c.color;
+  time.style.fontFamily = (c.font === "inherit") ? "inherit" : (FONTS[c.font] || "inherit");
+  date.style.fontSize = c.dateSize + "px";
+  date.style.display = c.showDate ? "block" : "none";
+}
+
+function applySearch(){
+  var s = S.search, inp = $("#searchInput"), f = $("#searchForm");
+  inp.placeholder = s.placeholder;
+  inp.style.height = s.height + "px";
+  inp.style.borderRadius = s.radius + "px";
+  inp.style.background = "rgba(12,9,22," + s.opacity + ")";
+  inp.style.color = s.textColor;
+  inp.style.backdropFilter = "blur(" + s.blur + "px)";
+  inp.style.webkitBackdropFilter = "blur(" + s.blur + "px)";
+  f.style.display = "flex";
+}
+
+function applyShortcuts(){
+  var c = S.shortcuts, grid = $("#scGrid");
+  grid.style.gap = c.gap + "px";
+  $$(".sc", grid).forEach(function(a){
+    a.style.width = c.size + "px";
+    a.style.height = c.size + "px";
+    a.style.borderRadius = c.radius + "px";
+    var nm = $(".nm", a); if(nm) nm.style.display = c.showLabels ? "" : "none";
+  });
+}
+
+function applyLayout(id){
+  var el = $("#w-" + id);
+  if(!el) return;
+  var L = S.layout[id];
+  el.style.left = L.x + "%";
+  el.style.top = L.y + "%";
+  el.style.width = L.w + "px";
+  el.style.height = (L.h == null || L.h === "") ? "auto" : L.h + "px";
+  el.style.zIndex = (L.z == null ? 1 : L.z);
+  el.style.maxWidth = "calc(100vw - 16px)";
+}
+
+/* ============================ clock ============================ */
+var DAYS = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var MONTHS = ["January","February","March","April","May","June","July","August",
+              "September","October","November","December"];
+var MON3 = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+function pad(n){ return n < 10 ? "0" + n : "" + n; }
+
+function formatDate(d, style){
+  var dd = pad(d.getDate()), mm = pad(d.getMonth() + 1), yyyy = d.getFullYear();
+  switch(style){
+    case "medium":  return dd.replace(/^0/,"") + " " + MON3[d.getMonth()] + " " + yyyy;
+    case "numeric": return dd + "/" + mm + "/" + yyyy;
+    case "iso":     return yyyy + "-" + mm + "-" + dd;
+    case "short":   return DAYS[d.getDay()].slice(0,3) + " " + d.getDate() + " " + MON3[d.getMonth()];
+    default:        return DAYS[d.getDay()] + ", " + d.getDate() + " " + MONTHS[d.getMonth()] + " " + yyyy;
+  }
+}
+
+function tick(){
+  var now = new Date(), c = S.clock;
+  var h = now.getHours(), m = now.getMinutes(), s = now.getSeconds(), suffix = "";
+  if(!c.h24){
+    suffix = h >= 12 ? " PM" : " AM";
+    h = h % 12; if(h === 0) h = 12;
+  }
+  var out = c.h24 ? pad(h) : "" + h;
+  out += ":" + pad(m);
+  if(c.seconds) out += ":" + pad(s);
+  out += suffix;
+  var el = $("#clockTime");
+  if(el.textContent !== out) el.textContent = out;
+  var dt = $("#clockDate"), ds = formatDate(now, c.dateStyle);
+  if(dt.textContent !== ds) dt.textContent = ds;
+}
+
+/* ============================ search ============================ */
+function initSearch(){
+  $("#searchForm").addEventListener("submit", function(e){
+    e.preventDefault();
+    var q = $("#searchInput").value.trim();
+    if(!q) { $("#searchInput").focus(); return; }
+    var base = ENGINES[S.search.engine] || ENGINES.google;
+    var url = base + encodeURIComponent(q);
+    if(S.search.newTab) window.open(url, "_blank", "noopener");
+    else window.location.href = url;
+  });
+}
+
+/* ============================ shortcuts ============================ */
+function hostOf(url){
+  try { return new URL(url).hostname; } catch(e){ return ""; }
+}
+
+function renderShortcuts(){
+  var grid = $("#scGrid"), c = S.shortcuts;
+  grid.innerHTML = "";
+  c.items.forEach(function(it){
+    var a = document.createElement("a");
+    a.className = "sc";
+    a.href = it.url || "#";
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.title = it.name || it.url || "";
+
+    var ico = document.createElement("div");
+    ico.className = "ico";
+    var icon = (it.icon || "").trim();
+    var isUrl = /^(https?:|data:image)/i.test(icon);
+    if(isUrl){
+      var img = document.createElement("img");
+      img.src = icon; img.alt = ""; img.loading = "lazy";
+      img.onerror = function(){ ico.textContent = (it.name || "?").charAt(0).toUpperCase(); };
+      ico.appendChild(img);
+    } else if(icon){
+      ico.textContent = icon;
+    } else if(c.favicons && hostOf(it.url)){
+      var fav = document.createElement("img");
+      fav.src = "https://www.google.com/s2/favicons?sz=64&domain=" + encodeURIComponent(hostOf(it.url));
+      fav.alt = ""; fav.loading = "lazy";
+      fav.onerror = function(){ ico.textContent = (it.name || "?").charAt(0).toUpperCase(); };
+      ico.appendChild(fav);
+    } else {
+      ico.textContent = (it.name || "?").charAt(0).toUpperCase();
+    }
+    a.appendChild(ico);
+
+    var nm = document.createElement("div");
+    nm.className = "nm";
+    nm.textContent = it.name || hostOf(it.url);
+    a.appendChild(nm);
+
+    grid.appendChild(a);
+  });
+  applyShortcuts();
+}
+
+function renderShortcutEditor(){
+  var box = $("#scList");
+  box.innerHTML = "";
+  S.shortcuts.items.forEach(function(it, i){
+    var row = document.createElement("div");
+    row.className = "scrow";
+
+    var ord = document.createElement("div");
+    ord.className = "ord";
+    ord.textContent = (i + 1);
+
+    var fields = document.createElement("div");
+    fields.className = "fields";
+
+    var n = document.createElement("input");
+    n.type = "text"; n.placeholder = "Name"; n.value = it.name || "";
+    n.addEventListener("input", function(){ it.name = n.value; renderShortcuts(); saveSoon(); });
+
+    var u = document.createElement("input");
+    u.type = "url"; u.placeholder = "https://…"; u.value = it.url || "";
+    u.addEventListener("input", function(){ it.url = u.value; renderShortcuts(); saveSoon(); });
+
+    var ic = document.createElement("input");
+    ic.type = "text"; ic.placeholder = "Icon (emoji, letter or image URL)"; ic.value = it.icon || "";
+    ic.addEventListener("input", function(){ it.icon = ic.value; renderShortcuts(); saveSoon(); });
+
+    fields.appendChild(n); fields.appendChild(u); fields.appendChild(ic);
+
+    var acts = document.createElement("div");
+    acts.className = "acts";
+    [["▲", -1], ["▼", 1]].forEach(function(pair){
+      var b = document.createElement("button");
+      b.className = "mini"; b.type = "button"; b.textContent = pair[0];
+      b.addEventListener("click", function(){
+        var j = i + pair[1];
+        if(j < 0 || j >= S.shortcuts.items.length) return;
+        var tmp = S.shortcuts.items[i];
+        S.shortcuts.items[i] = S.shortcuts.items[j];
+        S.shortcuts.items[j] = tmp;
+        save(); renderShortcutEditor(); renderShortcuts();
+      });
+      acts.appendChild(b);
+    });
+    var del = document.createElement("button");
+    del.className = "mini"; del.type = "button"; del.textContent = "✕";
+    del.addEventListener("click", function(){
+      S.shortcuts.items.splice(i, 1);
+      save(); renderShortcutEditor(); renderShortcuts();
+    });
+    acts.appendChild(del);
+
+    row.appendChild(ord); row.appendChild(fields); row.appendChild(acts);
+    box.appendChild(row);
+  });
+}
+
+/* ============================ quotes ============================ */
+var quoteIdx = Math.floor(Math.random() * QUOTES.length);
+var quoteTimer = null;
+
+function showQuote(step){
+  if(step) quoteIdx = (quoteIdx + 1) % QUOTES.length;
+  var q = QUOTES[quoteIdx];
+  $("#quoteText").textContent = "“" + q[0] + "”";
+  $("#quoteAuthor").textContent = "— " + q[1];
+  var el = $("#w-quote");
+  if(el) el.style.fontSize = S.quote.size + "px";
+}
+
+function scheduleQuotes(){
+  clearInterval(quoteTimer);
+  if(S.quote.rotate) quoteTimer = setInterval(function(){ showQuote(true); }, S.quote.interval * 60000);
+}
+
+/* ============================ news ============================ */
+function applyNewsSource(){
+  var el = $("#newsList");
+  if(el) el.dataset.source = S.news.source + "|" + S.news.count + "|" + S.news.rss;
+}
+
+var newsBusy = false;
+var reloadNewsSoon = debounce(function(){ loadNews(); }, 700);
+function loadNews(){
+  var box = $("#newsList");
+  if(!box || newsBusy) return;
+  newsBusy = true;
+  box.innerHTML = '<div class="muted small">Loading…</div>';
+  var count = Math.max(1, Math.min(20, S.news.count | 0));
+
+  var done = function(items){
+    newsBusy = false;
+    if(!items.length){ box.innerHTML = '<div class="muted small">Nothing to show.</div>'; return; }
+    box.innerHTML = "";
+    items.slice(0, count).forEach(function(it){
+      var a = document.createElement("a");
+      a.className = "newsitem";
+      a.href = it.url || "#";
+      a.target = "_blank"; a.rel = "noopener";
+      a.textContent = it.title || "Untitled";
+      box.appendChild(a);
+    });
+  };
+  var fail = function(msg){
+    newsBusy = false;
+    box.innerHTML = '<div class="muted small">' + msg + "</div>";
+  };
+
+  if(S.news.source === "rss"){
+    var url = (S.news.rss || "").trim();
+    if(!url){ fail("Add an RSS URL in Settings → Widgets."); return; }
+    fetch(url, { mode: "cors" })
+      .then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.text(); })
+      .then(function(txt){
+        var doc = new DOMParser().parseFromString(txt, "text/xml");
+        var nodes = doc.querySelectorAll("item, entry");
+        var items = Array.prototype.slice.call(nodes).map(function(n){
+          var t = n.querySelector("title");
+          var l = n.querySelector("link");
+          var href = l ? (l.getAttribute("href") || l.textContent || "") : "";
+          return { title: (t ? t.textContent : "").trim() || "Untitled", url: href.trim() };
+        });
+        if(!items.length) return fail("That feed returned no items.");
+        done(items);
+      })
+      .catch(function(){
+        fail("Couldn't load that feed — it likely blocks browser requests (CORS). Hacker News is the safe default.");
+      });
+    return;
+  }
+
+  fetch("https://hacker-news.firebaseio.com/v0/topstories.json")
+    .then(function(r){ return r.json(); })
+    .then(function(ids){
+      var top = (ids || []).slice(0, count);
+      return Promise.all(top.map(function(id){
+        return fetch("https://hacker-news.firebaseio.com/v0/item/" + id + ".json")
+          .then(function(r){ return r.json(); })
+          .catch(function(){ return null; });
+      }));
+    })
+    .then(function(items){
+      var clean = items.filter(Boolean).map(function(i){
+        return { title: i.title, url: i.url || ("https://news.ycombinator.com/item?id=" + i.id) };
+      });
+      done(clean);
+    })
+    .catch(function(){ fail("Couldn't reach the news service. Check your connection."); });
+}
+
+/* ============================ layout editor ============================ */
+function zOf(id){ return (S.layout[id] && S.layout[id].z != null) ? S.layout[id].z : 1; }
+
+function normalizeZ(){
+  var order = WIDGETS.slice().sort(function(a,b){ return zOf(a) - zOf(b); });
+  order.forEach(function(id, i){ S.layout[id].z = i + 1; });
+  WIDGETS.forEach(function(id){ applyLayout(id); });
+}
+
+function renderLayoutEditor(){
+  var box = $("#layoutList");
+  box.innerHTML = "";
+  WIDGETS.forEach(function(id){
+    var row = document.createElement("div");
+    row.className = "wrow";
+    row.innerHTML =
+      '<div class="whead"><strong>' + WNAMES[id] + '</strong>' +
+        '<div class="wacts">' +
+          '<button class="mini" type="button" data-z="front" data-id="' + id + '">Front</button>' +
+          '<button class="mini" type="button" data-z="back" data-id="' + id + '">Back</button>' +
+          '<label class="sw"><input type="checkbox" data-bind="' + id + '.visible"><span></span></label>' +
+        '</div>' +
+      '</div>' +
+      '<div class="grid4">' +
+        '<label>X %<input type="number" step="0.1" data-bind="layout.' + id + '.x"></label>' +
+        '<label>Y %<input type="number" step="0.1" data-bind="layout.' + id + '.y"></label>' +
+        '<label>Width px<input type="number" step="1" min="120" data-bind="layout.' + id + '.w"></label>' +
+        '<label>Height px<input type="number" step="1" min="40" placeholder="auto" data-bind="layout.' + id + '.h"></label>' +
+      '</div>';
+    box.appendChild(row);
+  });
+
+  box.onclick = function(e){
+    var b = e.target.closest("[data-z]");
+    if(!b) return;
+    var id = b.dataset.id;
+    if(b.dataset.z === "front"){
+      var maxZ = Math.max.apply(null, WIDGETS.map(zOf));
+      S.layout[id].z = maxZ + 1;
+    } else {
+      var minZ = Math.min.apply(null, WIDGETS.map(zOf));
+      S.layout[id].z = minZ - 1;
+    }
+    normalizeZ(); save();
+  };
+}
+
+function setCanvas(h){
+  var vh = window.innerHeight;
+  var want = (h && h > vh + 1) ? Math.ceil(h) : 0;
+  var cur = parseInt(canvas.style.height, 10) || 0;
+  if(want === cur) return;
+  canvas.style.height = want ? want + "px" : "100%";
+  stage.style.overflowY = want ? "auto" : "hidden";
+  if(!want && stage.scrollTop) stage.scrollTop = 0;
+}
+
+function arrange(){
+  var sw = canvas.clientWidth || stage.clientWidth;
+  var sh = window.innerHeight;
+  if(!sw || !sh) return false;
+  var margin = 14, gap = 14;
+  var phone = sw < 700;
+
+  setCanvas(0);
+
+  // pass 1: fit widths to the screen
+  WIDGETS.forEach(function(id){
+    if(!S[id].visible) return;
+    var avail = sw - margin * 2;
+    var w = phone ? avail : Math.min(S.layout[id].w || 320, avail);
+    S.layout[id].w = Math.round(Math.max(160, Math.min(w, avail)));
+    applyLayout(id);
+  });
+
+  // pass 2: measure
+  var items = WIDGETS.filter(function(id){ return S[id].visible; }).map(function(id){
+    var el = $("#w-" + id);
+    var rect = el ? el.getBoundingClientRect() : { width: 300, height: 120 };
+    return { id: id, w: S.layout[id].w, h: Math.round(rect.height || 120) };
+  });
+  if(!items.length) return false;
+
+  // pass 3: pack into columns, growing the canvas if it runs off the bottom
+  var x = margin, y = margin, colW = 0, placed = [];
+  items.forEach(function(it){
+    if(y + it.h > sh - margin && y > margin && x + colW + gap + it.w <= sw - margin){
+      x += colW + gap; y = margin; colW = 0;
+    }
+    placed.push({ id: it.id, x: x, y: y, w: it.w });
+    colW = Math.max(colW, it.w);
+    y += it.h + gap;
+  });
+
+  var bottom = y - gap + margin;
+  var canvasH = Math.max(sh, bottom);
+  setCanvas(canvasH > sh ? canvasH : 0);
+
+  placed.forEach(function(it){
+    S.layout[it.id].x = Math.round((it.x / sw) * 1000) / 10;
+    S.layout[it.id].y = Math.round((it.y / canvasH) * 1000) / 10;
+    applyLayout(it.id);
+  });
+
+  S.layout._arranged = true;
+  S.layout._canvas = canvasH > sh ? canvasH : 0;
+  return true;
+}
+
+var arrangeSoon = debounce(function(){
+  if(drag || !narrowMode || S.layout._custom) return;
+  if(arrange()){ save(true); syncLayoutInputs(); }
+}, 400);
+
+function tidy(){
+  S.layout._custom = false;
+  if(!arrange()) return;
+  save(); syncLayoutInputs();
+  toast("Widgets arranged to fit this screen.");
+}
+
+/* ---- desktop / phone layouts ---- */
+var narrowMode = false;
+
+/* Phones and tablets in portrait get their own arrangement: the desktop
+   layout needs roughly 1000px of width before the two columns stop colliding. */
+function isNarrow(){
+  return window.innerWidth < 1000 || window.innerHeight < 560;
+}
+
+function swapLayouts(){
+  var tmp = S.layout;
+  S.layout = S.layoutSm;
+  S.layoutSm = tmp;
+}
+
+function enterMode(narrow){
+  if(narrow === narrowMode) return;
+  narrowMode = narrow;
+  swapLayouts();
+  setCanvas(0);
+  apply();
+  if(narrow && !S.layout._custom) arrange();
+  syncLayoutInputs();
+  save();
+}
+
+/* ============================ drag & resize ============================ */
+var drag = null;
+
+function beginDrag(e){
+  if(S.ui.lock) return;
+  var w = e.target.closest(".widget");
+  if(!w) return;
+  var id = w.dataset.w;
+  if(!id || !S[id] || !S[id].visible) return;
+  if(e.target.closest("input,textarea,select,a,button,[contenteditable],[data-nodrag]")) return;
+  if(e.pointerType === "mouse" && e.button !== 0) return;
+
+  var isTouch = e.pointerType && e.pointerType !== "mouse";
+  var onHandle = e.target.closest(".grip") || e.target.closest(".rs");
+  // on touch screens the page must stay scrollable, so only the handles drag
+  if(isTouch && !onHandle) return;
+
+  var rect = w.getBoundingClientRect(), sr = canvas.getBoundingClientRect();
+  drag = {
+    id: id,
+    mode: e.target.closest(".rs") ? "resize" : "move",
+    sx: e.clientX, sy: e.clientY,
+    x0: S.layout[id].x, y0: S.layout[id].y,
+    w0: rect.width, h0: rect.height,
+    sw: sr.width, sh: sr.height,
+    el: w
+  };
+  w.classList.add("dragging");
+  document.body.classList.add("dragging");
+  var maxZ = Math.max.apply(null, WIDGETS.map(zOf));
+  if(zOf(id) !== maxZ){ S.layout[id].z = maxZ + 1; applyLayout(id); }
+  if(e.cancelable) e.preventDefault();
+}
+
+function moveDrag(e){
+  if(!drag) return;
+  var L = S.layout[drag.id];
+  if(drag.mode === "move"){
+    var dxPct = ((e.clientX - drag.sx) / drag.sw) * 100;
+    var dyPct = ((e.clientY - drag.sy) / drag.sh) * 100;
+    var wPct = (drag.w0 / drag.sw) * 100;
+    var hPct = (drag.h0 / drag.sh) * 100;
+    L.x = Math.round(clamp(drag.x0 + dxPct, 0, Math.max(0, 100 - wPct)) * 10) / 10;
+    L.y = Math.round(clamp(drag.y0 + dyPct, 0, Math.max(0, 100 - hPct)) * 10) / 10;
+  } else {
+    L.w = Math.round(clamp(drag.w0 + (e.clientX - drag.sx), 140, drag.sw - 16));
+    L.h = Math.round(clamp(drag.h0 + (e.clientY - drag.sy), 56, drag.sh - 16));
+  }
+  applyLayout(drag.id);
+  if(e.cancelable) e.preventDefault();
+}
+
+function endDrag(){
+  if(!drag) return;
+  drag.el.classList.remove("dragging");
+  document.body.classList.remove("dragging");
+  var id = drag.id;
+  drag = null;
+  normalizeZ();
+  S.layout._arranged = true;
+  S.layout._custom = true;
+  syncLayoutInputs();
+  save();
+  if(id === "shortcuts" || id === "search") applyShortcuts();
+}
+
+function syncLayoutInputs(){
+  $$("[data-bind^='layout.']").forEach(function(el){
+    var v = getPath(S, el.dataset.bind);
+    if(v === null || v === undefined) el.value = "";
+    else if(document.activeElement !== el) el.value = v;
+  });
+}
+
+/* ============================ bindings ============================ */
+function bindAll(){
+  $$("[data-bind]").forEach(function(el){
+    if(el._bound) return;
+    el._bound = true;
+    var path = el.dataset.bind;
+    var v = getPath(S, path);
+
+    if(el.type === "checkbox") el.checked = !!v;
+    else if(el.type === "number"){
+      el.value = (v === null || v === undefined) ? "" : v;
+    } else el.value = (v === undefined || v === null) ? "" : v;
+
+    var handler = function(){
+      var val;
+      if(el.type === "checkbox") val = el.checked;
+      else if(el.type === "number"){
+        val = (el.value === "") ? null : parseFloat(el.value);
+        if(val !== null && isNaN(val)) val = null;
+      } else if(el.type === "range") val = parseFloat(el.value);
+      else val = el.value;
+
+      setPath(S, path, val);
+      // typing exact positions or sizes means the user is arranging by hand
+      if(path.indexOf("layout.") === 0) S.layout._custom = true;
+      apply();
+      updateValLabels();
+      if(path.indexOf("quote.") === 0){ showQuote(false); scheduleQuotes(); }
+      if(path.indexOf("news.") === 0){ applyNewsSource(); reloadNewsSoon(); }
+      saveSoon();
+    };
+    el.addEventListener("input", handler);
+    el.addEventListener("change", handler);
+  });
+  updateValLabels();
+}
+
+function updateValLabels(){
+  $$("[data-val]").forEach(function(el){
+    var v = getPath(S, el.dataset.val);
+    if(typeof v === "number"){
+      el.textContent = (Math.round(v * 100) / 100) + "";
+    } else {
+      el.textContent = (v === null || v === undefined) ? "auto" : String(v);
+    }
+  });
+}
+
+/* ============================ panel ============================ */
+function openPanel(open){
+  panel.classList.toggle("open", open);
+  scrim.classList.toggle("on", open);
+  panel.setAttribute("aria-hidden", open ? "false" : "true");
+  $("#btnSettings").classList.toggle("on", open);
+}
+function isPanelOpen(){ return panel.classList.contains("open"); }
+
+/* ============================ wallpaper io ============================ */
+function setWallpaperFromFile(file){
+  if(!file) return;
+  if(!/^image\//.test(file.type)){ toast("That file isn't an image."); return; }
+  var reader = new FileReader();
+  reader.onload = function(){
+    var img = new Image();
+    img.onload = function(){
+      var MAX = 1920;
+      var scale = Math.min(1, MAX / Math.max(img.width, img.height));
+      var cw = Math.round(img.width * scale), ch = Math.round(img.height * scale);
+      var cv = document.createElement("canvas");
+      cv.width = cw; cv.height = ch;
+      var ctx = cv.getContext("2d");
+      ctx.drawImage(img, 0, 0, cw, ch);
+      var data;
+      try { data = cv.toDataURL("image/jpeg", 0.85); }
+      catch(err){ toast("Couldn't process that image."); return; }
+      S.wallpaper.src = data;
+      apply(); save();
+      toast("Wallpaper updated.");
+    };
+    img.onerror = function(){ toast("That image couldn't be read."); };
+    img.src = reader.result;
+  };
+  reader.onerror = function(){ toast("That file couldn't be read."); };
+  reader.readAsDataURL(file);
+}
+
+function downloadJSON(){
+  var data = snapshot();
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "nightspace-backup.json";
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 500);
+  toast("Backup downloaded.");
+}
+
+function importJSON(file){
+  if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(){
+    var parsed;
+    try { parsed = JSON.parse(reader.result); }
+    catch(err){ toast("That file isn't valid JSON."); return; }
+    if(!isObj(parsed)){ toast("That backup looks empty."); return; }
+    S = merge(DEFAULTS, parsed);
+    WIDGETS.forEach(function(id){
+      S.layout[id] = merge(DEFAULTS.layout[id], S.layout[id] || {});
+      S[id] = merge(DEFAULTS[id], S[id] || {});
+    });
+    if(!Array.isArray(S.shortcuts.items)) S.shortcuts.items = clone(DEFAULTS.shortcuts.items);
+    hardRefresh();
+    toast("Backup restored.");
+  };
+  reader.onerror = function(){ toast("That file couldn't be read."); };
+  reader.readAsText(file);
+}
+
+function hardRefresh(){
+  setCanvas(0);
+  narrowMode = isNarrow();
+  if(narrowMode) swapLayouts();
+  apply();
+  renderShortcuts();
+  renderShortcutEditor();
+  renderLayoutEditor();
+  bindAll();
+  updateValLabels();
+  showQuote(false);
+  scheduleQuotes();
+  applyNewsSource();
+  loadNews();
+  $("#notesArea").value = S.notes.text || "";
+  $("#wallUrl").value = /^https?:/.test(S.wallpaper.src || "") ? S.wallpaper.src : "";
+  if(narrowMode && !S.layout._custom) arrange();
+  save();
+}
+
+/* ============================ init ============================ */
+function init(){
+  S = load();
+
+  // phones get their own arrangement so nothing overlaps
+  narrowMode = isNarrow();
+  if(narrowMode) swapLayouts();
+
+  apply();
+  renderShortcuts();
+  renderShortcutEditor();
+  renderLayoutEditor();
+  bindAll();
+  $("#notesArea").value = S.notes.text || "";
+  $("#wallUrl").value = /^https?:/.test(S.wallpaper.src || "") ? S.wallpaper.src : "";
+
+  tick(); setInterval(tick, 1000);
+  showQuote(false); scheduleQuotes();
+  applyNewsSource(); loadNews();
+  initSearch();
+
+  // arrange only once every widget has its real content and height
+  if(narrowMode && !S.layout._custom) arrange();
+
+  /* swatches */
+  ["#8b5cf6","#6366f1","#3b82f6","#06b6d4","#22c55e","#f59e0b","#ef4444","#ec4899"].forEach(function(col){
+    var b = document.createElement("button");
+    b.type = "button";
+    b.style.background = col;
+    b.title = col;
+    b.addEventListener("click", function(){
+      S.theme.accent = col;
+      apply(); save();
+      var el = $("[data-bind='theme.accent']"); if(el) el.value = col;
+    });
+    $("#swatches").appendChild(b);
+  });
+
+  /* toolbar */
+  $("#btnSettings").addEventListener("click", function(){ openPanel(!isPanelOpen()); });
+  $("#btnClose").addEventListener("click", function(){ openPanel(false); });
+  scrim.addEventListener("click", function(){ openPanel(false); });
+  $("#btnLock").addEventListener("click", function(){
+    S.ui.lock = !S.ui.lock;
+    apply(); save();
+    toast(S.ui.lock ? "Layout locked." : "Layout unlocked — drag away.");
+  });
+
+  /* tabs */
+  $$("#tabs button").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      $$("#tabs button").forEach(function(b){ b.classList.remove("on"); });
+      $$(".pane").forEach(function(p){ p.classList.remove("on"); });
+      btn.classList.add("on");
+      var pane = $(".pane[data-pane='" + btn.dataset.tab + "']");
+      if(pane) pane.classList.add("on");
+      $("#panelBody").scrollTop = 0;
+    });
+  });
+
+  /* wallpaper */
+  $("#btnUpload").addEventListener("click", function(){ $("#fileInput").click(); });
+  $("#fileInput").addEventListener("change", function(e){
+    setWallpaperFromFile(e.target.files && e.target.files[0]);
+    e.target.value = "";
+  });
+  $("#btnWallUrl").addEventListener("click", function(){
+    var v = $("#wallUrl").value.trim();
+    if(!v){ toast("Paste an image URL first."); return; }
+    S.wallpaper.src = v;
+    apply(); save();
+    toast("Wallpaper set from URL.");
+  });
+  $("#btnWallRemove").addEventListener("click", function(){
+    S.wallpaper.src = "";
+    $("#wallUrl").value = "";
+    apply(); save();
+    toast("Wallpaper removed.");
+  });
+
+  /* shortcuts */
+  $("#btnAddSc").addEventListener("click", function(){
+    S.shortcuts.items.push({ name:"New link", url:"https://example.com", icon:"" });
+    save(); renderShortcutEditor(); renderShortcuts();
+    var box = $("#scList");
+    var last = box.lastElementChild;
+    if(last){
+      if(last.scrollIntoView) last.scrollIntoView({ block:"nearest" });
+      var inp = last.querySelector("input"); if(inp) inp.focus();
+    }
+  });
+
+  /* widgets pane */
+  $("#btnTidy").addEventListener("click", tidy);
+  $("#btnUnlockAll").addEventListener("click", function(){
+    WIDGETS.forEach(function(id){ S[id].visible = true; });
+    apply(); save(); bindAll();
+    toast("All widgets shown.");
+  });
+  $("#btnClearNotes").addEventListener("click", function(){
+    S.notes.text = ""; $("#notesArea").value = ""; save(); toast("Notes cleared.");
+  });
+  $("#quoteShuffle").addEventListener("click", function(){ showQuote(true); });
+  $("#newsRefresh").addEventListener("click", function(){ loadNews(); });
+
+  /* notes */
+  var notesArea = $("#notesArea");
+  notesArea.addEventListener("input", function(){
+    S.notes.text = notesArea.value;
+    saveSoon();
+  });
+
+  /* data */
+  $("#btnSave").addEventListener("click", function(){ toast(save() ? "Settings saved." : "Couldn't save."); });
+  $("#btnExport").addEventListener("click", downloadJSON);
+  $("#btnImport").addEventListener("click", function(){ $("#importInput").click(); });
+  $("#importInput").addEventListener("change", function(e){
+    importJSON(e.target.files && e.target.files[0]);
+    e.target.value = "";
+  });
+  $("#btnReset").addEventListener("click", function(){
+    if(!window.confirm("Reset Nightspace? This erases your wallpaper, shortcuts, notes and every setting in this browser.")) return;
+    try { localStorage.removeItem(LS_KEY); } catch(err){}
+    S = clone(DEFAULTS);
+    hardRefresh();
+    toast("Everything reset to defaults.");
+  });
+
+  /* drag */
+  stage.addEventListener("pointerdown", beginDrag);
+  window.addEventListener("pointermove", moveDrag, { passive: false });
+  window.addEventListener("pointerup", endDrag);
+  window.addEventListener("pointercancel", endDrag);
+
+  /* keyboard */
+  document.addEventListener("keydown", function(e){
+    if(e.key === "Escape" && isPanelOpen()) openPanel(false);
+    if(e.key === "/" && !isPanelOpen() && document.activeElement === document.body){
+      e.preventDefault(); $("#searchInput").focus();
+    }
+  });
+
+  /* resize */
+  var lastW = window.innerWidth, lastH = window.innerHeight;
+  window.addEventListener("resize", debounce(function(){
+    var w = window.innerWidth, h = window.innerHeight;
+    var changed = Math.abs(w - lastW) > 2 || Math.abs(h - lastH) > 60;
+    lastW = w; lastH = h;
+
+    enterMode(isNarrow());
+
+    if(narrowMode && !S.layout._custom){
+      if(changed) arrange();
+    } else {
+      var sw = canvas.clientWidth || stage.clientWidth;
+      WIDGETS.forEach(function(id){
+        var L = S.layout[id];
+        var maxX = Math.max(0, 100 - (L.w / sw) * 100);
+        if(L.x > maxX){ L.x = Math.round(maxX * 10) / 10; applyLayout(id); }
+      });
+    }
+    syncLayoutInputs();
+    save(true);
+  }, 200));
+
+  if(S.__firstRun) toast("Welcome to Nightspace — drag anything, gear for settings.");
+}
+
+if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+else init();
+
 })();
 </script>
 </body>
